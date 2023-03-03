@@ -4,9 +4,7 @@
     {
         static void Main(string[] args)
         {
-            Menu.TitleScreen();
-            Menu.MenuOptions();
-            Console.ReadLine();
+            General.App();
         }
     }
 }
