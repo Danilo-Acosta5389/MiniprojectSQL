@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +8,22 @@ using System.Threading.Tasks;
 
 namespace MiniprojectSQL
 {
-    public class Menu
+    public class General
     {
+        public static void App()
+        {
+            TitleScreen();
+
+            //String[] arr = { "Register working hours in project", "New project", "New person", "Edit project", "Edit person" , "Quit" };
+            
+            NavMenu(new String[] { "Register working hours in project", "New project", "New person", "Edit project", "Edit person", "Quit" });
+            
+
+
+
+        }
+
+
         public static void TitleScreen()
         {
             string title = @"
@@ -71,8 +86,84 @@ namespace MiniprojectSQL
             }
             //Console.WriteLine($"You choosed option {option}");
 
+            String[] strings = {"Play","Settings","Online","Quit"};
+            NavMenu(strings);
+
+        }
+
+        public static void NavMenu(String[] options)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n   Please use UP and DOWN arrows to navigate\n   Press ENTER to select\n");
+            Console.ResetColor();
+
+            //Change foreground color in a string using this example: "\u001b[32mOption 1."
+            //To reset color on the same string you can do like this: "\u001b[32mOption 1.\u001b[0m"
+
+
+            Console.CursorVisible = false;
+            int option = 0;
+            ConsoleKeyInfo key;
+            (int left, int top) = Console.GetCursorPosition();
+            string cursor = " -> ";
+            bool selectedOption = false;
+            while (!selectedOption)
+            {
+
+                Console.SetCursorPosition(left, top);
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i]}");
+                }
+
+                key = Console.ReadKey(true);
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        option = (option == options.Length - 1 ? option = 0 : option + 1);
+                        break;
+                    case ConsoleKey.UpArrow:
+                        option = (option == 0 ? option = options.Length - 1 : option - 1);
+                        break;
+                    case ConsoleKey.Enter:
+                        selectedOption = true;
+                        break;
+                }
+            }
+
         }
         
+        static void RegTime()
+        {
+            Console.WriteLine("Register work time");
+            Console.ReadKey(true);
+        }
+        static void NewProject()
+        {
+            Console.WriteLine("Add new project");
+            Console.ReadKey(true);
+        }
+        static void NewPerson()
+        { 
+            Console.WriteLine("Add new person");
+            Console.ReadKey(true);
+        }
+        static void EditProject()
+        { 
+            Console.WriteLine("Edit project");
+            Console.ReadKey(true);
+        }
+        static void EditPerson()
+        { 
+            Console.WriteLine("Edit person");
+            Console.ReadKey(true);
+        }        
+        static void Quit()
+        { 
+            Console.WriteLine("Quit");
+            Console.ReadKey(true);
+        }
     }
     
 }
