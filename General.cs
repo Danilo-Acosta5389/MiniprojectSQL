@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +13,37 @@ namespace MiniprojectSQL
     {
         public static void App()
         {
-            TitleScreen();
+            int index = 0;
+            bool appRunning = true;
+            while (appRunning)
+            {
+                Console.Clear();
+                TitleScreen();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\n   Please use UP and DOWN arrows to navigate\n   Press ENTER to select\n");
+                Console.ResetColor();
 
-            //String[] arr = { "Register working hours in project", "New project", "New person", "Edit project", "Edit person" , "Quit" };
-            
-            NavMenu(new String[] { "Register working hours in project", "New project", "New person", "Edit project", "Edit person", "Quit" });
-            
+                //Change foreground color in a string using this example: "\u001b[32mOption 1."
+                //To reset color on the same string you can do like this: "\u001b[32mOption 1.\u001b[0m"
 
+                /*
+                The NavMenu() method is a reusable meny, just pass in a string array like below
+                String[] arr = { "Register hours", "New project", "New person", "Edit project", "Edit person" , "Quit" };
+                NavMenu(arr);
+                The array can also be passed directly as an argument when calling the method like below
+                */
 
+                int option = NavMenu(new String[] { "Register hours in project", "New project", "New person", "Edit project", "Edit person", "Quit" }, index);
 
+                //NavMenu will return the index of wich option the user has picked
+                if (option == 0) RegTime("Register work time");
+                else if (option == 1) NewProject("Create a new project");
+                else if (option == 2) NewPerson("Create new person");
+                else if (option == 3) EditProject("Edit project");
+                else if (option == 4) EditPerson("Edit person");
+                else if (option == 5) Quit("Quit");
+                index = option;
+            }
         }
 
 
@@ -38,71 +61,11 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
-        public static void MenuOptions()
+
+        public static int NavMenu(String[] options, int option = 0)
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\n   Please use UP and DOWN arrows to navigate\n   Press ENTER to select\n");
-            //Change foreground color in a string using this example: "\u001b[32mOption 1."
-            //To reset color on the same string you can do like this: "\u001b[32mOption 1.\u001b[0m"
-            Console.ResetColor();
             Console.CursorVisible = false;
-
-            string cursor = " -> ";
-            ConsoleKeyInfo key;
-            (int left, int top) = Console.GetCursorPosition();
-            int option = 1;
-            bool selectedOption = false;
-            while (!selectedOption)
-            {
-                Console.SetCursorPosition(left, top);
-
-                Console.WriteLine($"{(option == 1 ? cursor : "    ")}Register working hours in project");
-                Console.WriteLine($"{(option == 2 ? cursor : "    ")}New project");
-                Console.WriteLine($"{(option == 3 ? cursor : "    ")}New person");
-                Console.WriteLine($"{(option == 4 ? cursor : "    ")}Edit project");
-                Console.WriteLine($"{(option == 5 ? cursor : "    ")}Edit person");
-                Console.WriteLine($"{(option == 6 ? cursor : "    ")}Quit");
-                key = Console.ReadKey(true);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.DownArrow:
-                        option = (option == 6 ? 1 : option + 1);
-                        break;
-                    case ConsoleKey.UpArrow:
-                        option = (option == 1 ? 6 : option - 1);
-                        break;
-                    case ConsoleKey.Enter:
-                        selectedOption = true;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (option == 1) Console.WriteLine("\nYou chosed Register working hours in project\n");
-            if (option == 6)
-            {
-                Console.WriteLine("\nYou chosed Quit\nBye bye.");
-            }
-            //Console.WriteLine($"You choosed option {option}");
-
-            String[] strings = {"Play","Settings","Online","Quit"};
-            NavMenu(strings);
-
-        }
-
-        public static void NavMenu(String[] options)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\n   Please use UP and DOWN arrows to navigate\n   Press ENTER to select\n");
-            Console.ResetColor();
-
-            //Change foreground color in a string using this example: "\u001b[32mOption 1."
-            //To reset color on the same string you can do like this: "\u001b[32mOption 1.\u001b[0m"
-
-
-            Console.CursorVisible = false;
-            int option = 0;
+            //int option = 0;
             ConsoleKeyInfo key;
             (int left, int top) = Console.GetCursorPosition();
             string cursor = " -> ";
@@ -131,39 +94,71 @@ namespace MiniprojectSQL
                         break;
                 }
             }
+            return option;
+        }
 
+        static void OptionTitle(string optionName)
+        {
+            Console.WriteLine();
+            Console.Write("     ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Write($" {optionName} ");
+            Console.ResetColor();
+            Console.WriteLine();
+        }
+
+        static int AreYouSure(int index = 0)
+        {
+            Console.WriteLine("\n   Are you sure?\n");
+            int option = NavMenu(new string[] { "Yes", "No" }, index);
+            return option;
+            
         }
         
-        static void RegTime()
+        static void RegTime(string optionName)
         {
-            Console.WriteLine("Register work time");
+            Console.Clear();
+            TitleScreen();
+            OptionTitle(optionName);
             Console.ReadKey(true);
         }
-        static void NewProject()
+        static void NewProject(string optionName)
         {
-            Console.WriteLine("Add new project");
+            Console.Clear();
+            TitleScreen();
+            OptionTitle(optionName);
             Console.ReadKey(true);
         }
-        static void NewPerson()
-        { 
-            Console.WriteLine("Add new person");
+        static void NewPerson(string optionName)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitle(optionName);
             Console.ReadKey(true);
         }
-        static void EditProject()
-        { 
-            Console.WriteLine("Edit project");
+        static void EditProject(string optionName)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitle(optionName);
             Console.ReadKey(true);
         }
-        static void EditPerson()
-        { 
-            Console.WriteLine("Edit person");
+        static void EditPerson(string optionName)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitle(optionName);
             Console.ReadKey(true);
         }        
-        static void Quit()
-        { 
-            Console.WriteLine("Quit");
-            Console.ReadKey(true);
+        static void Quit(string optionName)
+        {
+            Console.Clear();
+            int index = 1;
+            TitleScreen();
+            OptionTitle(optionName);
+            int option = AreYouSure(index);
+            if (option == 0) Environment.Exit(0);
         }
     }
-    
 }
