@@ -139,6 +139,7 @@ namespace MiniprojectSQL
 
             Console.Write("\n   Project name: ");
             string projectName = Console.ReadLine();
+            Console.CursorVisible = false;
             bool success = DatabaseAccess.InsertNewProject(projectName);
             if (success == true) 
             {
@@ -163,8 +164,8 @@ namespace MiniprojectSQL
 
             Console.Write("\n   Person name: ");
             string personName = Console.ReadLine();
-            
-            //"\u001b[32mOption 1.\u001b[0m"
+            Console.CursorVisible = false;
+
             bool success = DatabaseAccess.InsertNewPerson(personName);
             if (success == true) 
             { 
