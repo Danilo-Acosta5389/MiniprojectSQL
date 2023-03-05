@@ -34,9 +34,9 @@ namespace MiniprojectSQL
 
                 //NavMenu will return the index of which option the user has picked
 
-                if (option == 0) RegTime("Register work time");
-                else if (option == 1) NewProject("Create a new project");
-                else if (option == 2) NewPerson("Create new person");
+                if (option == 0) RegTime("Register time on project");
+                else if (option == 1) NewProject("Add new projectName");
+                else if (option == 2) NewPerson("Add new personName");
                 else if (option == 3) EditProject("Edit project");
                 else if (option == 4) EditPerson("Edit person");
                 else if (option == 5) Quit("Quit");
@@ -58,7 +58,6 @@ namespace MiniprojectSQL
             Console.WriteLine(title);
             Console.ResetColor();
         }
-
 
         public static int NavMenu(String[] options, int option = 0)
         {
@@ -130,6 +129,8 @@ namespace MiniprojectSQL
             OptionTitle(optionName);
             PleasePressEnter();
         }
+
+
         static void NewProject(string optionName)
         {
             Console.Clear();
@@ -144,13 +145,13 @@ namespace MiniprojectSQL
             if (success == true) 
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n    Project successfully created!");
+                Console.WriteLine("\n    Project successfully added!");
                 Console.ResetColor();
             }
             else 
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\n    Unsuccessful to create project");
+                Console.WriteLine("\n    Unsuccessful to add new project");
                 Console.ResetColor();
             }
             PleasePressEnter();
@@ -170,13 +171,13 @@ namespace MiniprojectSQL
             if (success == true) 
             { 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n   Person successfully created!");
+                Console.WriteLine("\n   Person successfully added!");
                 Console.ResetColor();
             }
             else 
             { 
                 Console.ForegroundColor= ConsoleColor.Red;
-                Console.WriteLine("\n    Unsuccessful to create person");
+                Console.WriteLine("\n    Unsuccessful to add new person");
                 Console.ResetColor();
             }
             PleasePressEnter();
