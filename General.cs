@@ -116,6 +116,15 @@ namespace MiniprojectSQL
             
         }
         
+        static void PleasePressEnter()
+        {
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n   Please press ENTER to continue");
+            while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
+            Console.ResetColor ();
+        }
+
         static void RegTime(string optionName)
         {
             Console.Clear();
@@ -128,14 +137,50 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitle(optionName);
-            Console.ReadKey(true);
+            Console.CursorVisible = true;
+
+            Console.Write("\n   Project name: ");
+            string projectName = Console.ReadLine();
+            bool success = DatabaseAccess.InsertNewProject(projectName);
+            if (success == true) 
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n    Project successfully created!");
+                Console.ResetColor();
+            }
+            else 
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n    Unsuccessful to create project");
+                Console.ResetColor();
+            }
+            PleasePressEnter();
         }
         static void NewPerson(string optionName)
         {
             Console.Clear();
             TitleScreen();
             OptionTitle(optionName);
-            Console.ReadKey(true);
+            Console.CursorVisible = true;
+
+            Console.Write("\n   Person name: ");
+            string personName = Console.ReadLine();
+            
+            //"\u001b[32mOption 1.\u001b[0m"
+            bool success = DatabaseAccess.InsertNewPerson(personName);
+            if (success == true) 
+            { 
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n   Person successfully created!");
+                Console.ResetColor();
+            }
+            else 
+            { 
+                Console.ForegroundColor= ConsoleColor.Red;
+                Console.WriteLine("\n    Unsuccessful to create person");
+                Console.ResetColor();
+            }
+            PleasePressEnter();
         }
         static void EditProject(string optionName)
         {
