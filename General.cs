@@ -23,19 +23,17 @@ namespace MiniprojectSQL
                 Console.WriteLine("\n   Please use UP and DOWN arrows to navigate\n   Press ENTER to select\n");
                 Console.ResetColor();
 
-                //Change foreground color in a string using this example: "\u001b[32mOption 1."
-                //To reset color on the same string you can do like this: "\u001b[32mOption 1.\u001b[0m"
-
                 /*
-                The NavMenu() method is a reusable meny, just pass in a string array like below
+                The NavMenu() method is a reusable menu, just pass in a string array like below
                 String[] arr = { "Register hours", "New project", "New person", "Edit project", "Edit person" , "Quit" };
                 NavMenu(arr);
-                The array can also be passed directly as an argument when calling the method like below
+                OR pass the array directly as argument like below
                 */
 
                 int option = NavMenu(new String[] { "Register hours in project", "New project", "New person", "Edit project", "Edit person", "Quit" }, index);
 
-                //NavMenu will return the index of wich option the user has picked
+                //NavMenu will return the index of which option the user has picked
+
                 if (option == 0) RegTime("Register work time");
                 else if (option == 1) NewProject("Create a new project");
                 else if (option == 2) NewPerson("Create new person");
@@ -102,7 +100,7 @@ namespace MiniprojectSQL
             Console.WriteLine();
             Console.Write("     ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.Red;
+            Console.BackgroundColor = ConsoleColor.DarkRed;
             Console.Write($" {optionName} ");
             Console.ResetColor();
             Console.WriteLine();
@@ -130,7 +128,7 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitle(optionName);
-            Console.ReadKey(true);
+            PleasePressEnter();
         }
         static void NewProject(string optionName)
         {
@@ -187,22 +185,22 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitle(optionName);
-            Console.ReadKey(true);
+            PleasePressEnter();
         }
         static void EditPerson(string optionName)
         {
             Console.Clear();
             TitleScreen();
             OptionTitle(optionName);
-            Console.ReadKey(true);
+            PleasePressEnter();
         }        
         static void Quit(string optionName)
         {
             Console.Clear();
-            int index = 1;
+            //int index = 1;
             TitleScreen();
             OptionTitle(optionName);
-            int option = AreYouSure(index);
+            int option = AreYouSure();
             if (option == 0) Environment.Exit(0);
         }
     }
