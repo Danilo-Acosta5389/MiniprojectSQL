@@ -117,7 +117,6 @@ namespace MiniprojectSQL
             InstructionInYellow("Are you sure?");
             int option = NavMenu(new List<string> { "Yes", "No" }, index);
             return option;
-            
         }
         
         public static void PleasePressEnter()
@@ -152,59 +151,100 @@ namespace MiniprojectSQL
             else return "no";
         }
 
-        public static void RegTime(string optionName)
+        public static string RegPerson(string optionName)
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-
             InstructionInYellow("Choose a person");
 
             List<string> personList = DatabaseAccess.GetPersonName();
-            //personList.Add("Back to menu");
+            personList.Add("\u001b[0mBack to menu");
 
             int personIndex = NavMenu(personList);
-            Console.WriteLine($"\n   You choosed: \x1b[1m{personList[personIndex]}\x1b[0m\n");
-            //if (personIndex != personArr.Length - 1)
-            //{
-            //    Console.WriteLine($"\n   You choosed: \x1b[1m{personArr[personIndex]}\x1b[0m\n");
-            //}
-            //personList.Clear();
-
-            InstructionInYellow("Choose project");
-
-            List<string> projectList = DatabaseAccess.GetProjectName();
-            //projectList.Add("Back to menu");
-
-            int projectIndex = NavMenu(projectList);
-            Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
-            //if (projectIndex != projectArr.Length - 1)
-            //{
-            //    Console.WriteLine($"\n   You choosed: \x1b[1m{projectArr[projectIndex]}\x1b[0m\n");
-            //}
-            //projectList.Clear();
-
-            InstructionInYellow("Input hours spent on project today\n   Leave blank to go back");
-            Console.CursorVisible = true;
-            Console.Write(" ==> ");
-            int hours = int.Parse(Console.ReadLine());
-            Console.CursorVisible = false;
-
-            bool success = DatabaseAccess.RegistrateHoursInDB(projectList[projectIndex] , personList[personIndex] , hours);
-            if (success)
+            if (personIndex != personList.Count - 1)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n    Success!");
-                Console.ResetColor();
-                Console.WriteLine($"\n   Registered: \u001b[1m{personList[personIndex]}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{projectList[projectIndex]}\u001b[0m today");
+                //Console.WriteLine($"\n   You choosed: \x1b[1m{personList[personIndex]}\x1b[0m\n");
+                return personList[personIndex];
             }
             else
             {
-                ErrorInRed("Unsuccessful to register hours");
+                Console.WriteLine($"\n   You choosed: \x1b[1m{personList[personIndex]}\x1b[0m\n");
+                return "";
+            }
+        }
+
+        public static string RegProject(string optionName)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            InstructionInYellow("Choose project");
+
+            List<string> projectList = DatabaseAccess.GetProjectName();
+            projectList.Add("\u001b[0mBack to menu");
+
+            int projectIndex = NavMenu(projectList);
+            if (projectIndex != projectList.Count - 1)
+            {
+                //Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
+                return projectList[projectIndex];
+            }
+            else
+            {
+                Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
+                return "";
             }
             
-            //IsCorrect();
+        }
+
+
+        public static void RegTime(string optionName)
+        {
+            
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            bool isRunning = true;
+            while (isRunning)
+            {
+                string person = RegPerson(optionName);
+                if (person == "") { break; }
+
+                string project = RegProject(optionName);
+                if (project == "") { break; }
+
+                InstructionInYellow("Input hours spent on project today\n   Leave blank to go back");
+
+                Console.CursorVisible = true;
+                Console.Write(" ==> ");
+                int hours = int.Parse(Console.ReadLine());
+                Console.CursorVisible = false;
+
+                bool success = DatabaseAccess.RegistrateHoursInDB(project, person, hours);
+                if (success)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("\n    Great success!");
+                    Console.ResetColor();
+                    Console.WriteLine($"\n   Registered: \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
+                    
+                }
+                else
+                {
+                    ErrorInRed("Unsuccessful to register hours");
+                }
+                isRunning = false;
+            }
             PleasePressEnter();
+
+
+
+
+
+
+            //IsCorrect();
+
 
             /*
             bool isRunning = true;
