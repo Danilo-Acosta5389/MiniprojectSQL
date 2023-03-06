@@ -1,12 +1,10 @@
 ﻿
-        //Original menu model i used
+        ORIGINAL MENU I USED
 
         public static void MenuOptions()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\n   Please use UP and DOWN arrows to navigate\n   Press ENTER to select\n");
-            //Change foreground color in a string using this example: "\u001b[32mOption 1."
-            //To reset color on the same string you can do like this: "\u001b[32mOption 1.\u001b[0m"
             Console.ResetColor();
             Console.CursorVisible = false;
 
@@ -49,7 +47,41 @@
             }
             //Console.WriteLine($"You choosed option {option}");
 
-            String[] strings = {"Play","Settings","Online","Quit"};
-            NavMenu(strings);
+            //String[] strings = {"Play","Settings","Online","Quit"};
+            //NavMenu(strings);
 
         }
+
+
+        ESCAPE CODES FOR CHANGING COLOR/EFFECT IN STRINGS
+
+        I found theese escape codes in this persons github https://gist.github.com/abritinthebay/d80eb99b2726c83feb0d97eab95206c4
+
+        Change foreground color in a string using this example: "\u001b[32mOption 1."
+        To reset color on the same string you can do like this: "\u001b[32mOption 1.\u001b[0m"
+
+        reset = "\x1b[0m"
+        bright = "\x1b[1m"
+        dim = "\x1b[2m"
+        underscore = "\x1b[4m"
+        blink = "\x1b[5m"
+        reverse = "\x1b[7m"
+        hidden = "\x1b[8m"
+        
+        black = "\x1b[30m"
+        red = "\x1b[31m"
+        green = "\x1b[32m"
+        yellow = "\x1b[33m"
+        blue = "\x1b[34m"
+        magenta = "\x1b[35m"
+        cyan = "\x1b[36m"
+        white = "\x1b[37m"
+        
+        BGblack = "\x1b[40m"
+        BGred = "\x1b[41m"
+        BGgreen = "\x1b[42m"
+        BGyellow = "\x1b[43m"
+        BGblue = "\x1b[44m"
+        BGmagenta = "\x1b[45m"
+        BGcyan = "\x1b[46m"
+        BGwhite = "\x1b[47m"

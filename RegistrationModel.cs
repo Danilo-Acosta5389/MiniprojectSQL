@@ -8,7 +8,7 @@ namespace MiniprojectSQL
 {
     public class RegistrationModel
     {
-        public int reg_id { get; set; }
+        public int id { get; set; }
         public int reg_person_id { get; set; }
         public int reg_project_id { get; set; }
         public int hours { get; set; }

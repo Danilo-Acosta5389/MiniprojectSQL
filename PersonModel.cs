@@ -8,7 +8,7 @@ namespace MiniprojectSQL
 {
     public class PersonModel
     {
-        public int person_id { get; set; }
+        public int id { get; set; }
         public string person_name { get; set; }
     }
 }
