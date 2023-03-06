@@ -36,12 +36,12 @@ namespace MiniprojectSQL
 
                     //NavMenu will return the index of which option the user has picked
 
-                    if (option == 0) RegTime("Register time on project");
-                    else if (option == 1) NewProject("Add new projectName");
-                    else if (option == 2) NewPerson("Add new personName");
-                    else if (option == 3) EditProject("Edit project");
-                    else if (option == 4) EditPerson("Edit person");
-                    else if (option == 5) Quit("Close application");
+                    if (option == 0) RegTime();
+                    else if (option == 1) NewProject();
+                    else if (option == 2) NewPerson();
+                    else if (option == 3) EditProject();
+                    else if (option == 4) EditPerson();
+                    else if (option == 5) Quit();
                     index = option;
                 }
                 catch (Exception e)
@@ -150,15 +150,19 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
-        public static string IsCorrect(int index = 0)
+        public static string IsCorrect(string optionName , string message, int index = 0)
         {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
             InstructionInYellow("Is this correct?");
+            Console.WriteLine(message);
             int yesOrNo = NavMenu(new List<string> { "Yes", "No" }, index);
             if (yesOrNo == 0) return "yes";
             else return "no";
         }
 
-        public static string RegPerson(string optionName)
+        public static string GetPerson(string optionName)
         {
             Console.Clear();
             TitleScreen();
@@ -180,7 +184,7 @@ namespace MiniprojectSQL
             }
         }
 
-        public static string RegProject(string optionName)
+        public static string GetProject(string optionName)
         {
             Console.Clear();
             TitleScreen();
@@ -204,7 +208,7 @@ namespace MiniprojectSQL
         }
 
 
-        public static void RegTime(string optionName)
+        public static void RegTime(string optionName = "Register time on project")
         {
             
             Console.Clear();
@@ -213,10 +217,10 @@ namespace MiniprojectSQL
             bool isRunning = true;
             while (isRunning)
             {
-                string person = RegPerson(optionName);
+                string person = GetPerson(optionName);
                 if (person == "") { break; }
 
-                string project = RegProject(optionName);
+                string project = GetProject(optionName);
                 if (project == "") { break; }
 
                 InstructionInYellow("Input hours spent on project today\n   Leave blank to go back");
@@ -225,29 +229,37 @@ namespace MiniprojectSQL
                 Console.Write(" ==> ");
                 int hours = int.Parse(Console.ReadLine());
                 Console.CursorVisible = false;
+                //Console.WriteLine($"\n   \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
+                string message = $"\n   \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today\n";
+                string yesNo = IsCorrect(optionName ,message);
+                if (yesNo == "yes")
+                {
+                    bool success = DatabaseAccess.RegistrateHoursInDB(project, person, hours);
+                    if (success)
+                    {
+                        SuccessInGreen("Great success!");
+                        Console.WriteLine($"\n   \u001b[1mRegistered\u001b[0m: \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
 
-                bool success = DatabaseAccess.RegistrateHoursInDB(project, person, hours);
-                if (success)
-                {
-                    SuccessInGreen("Great success!");
-                    Console.WriteLine($"\n   Registered: \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
-                    
+                    }
+                    else
+                    {
+                        ErrorInRed("Unsuccessful to register hours");
+                    }
                 }
-                else
-                {
-                    ErrorInRed("Unsuccessful to register hours");
-                }
+                else { Console.WriteLine($"\n   You choosed {yesNo}"); }
+                
                 isRunning = false;
             }
             PleasePressEnter();
         }
 
 
-        static void NewProject(string optionName)
+        static void NewProject(string optionName = "Add new project")
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
+            InstructionInYellow("Please input project name\n   Leave blank to exit");
             Console.CursorVisible = true;
 
             Console.Write("\n   Project name: ");
@@ -264,11 +276,12 @@ namespace MiniprojectSQL
             }
             PleasePressEnter();
         }
-        static void NewPerson(string optionName)
+        static void NewPerson(string optionName = "Add new person")
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
+            InstructionInYellow("Please input person name\n   Leave blank to exit");
             Console.CursorVisible = true;
 
             Console.Write("\n   Person name: ");
@@ -286,21 +299,26 @@ namespace MiniprojectSQL
             }
             PleasePressEnter();
         }
-        static void EditProject(string optionName)
+        static void EditProject(string optionName = "Edit project")
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
+            string project = GetProject(optionName);
+            Console.WriteLine($"\n   Edit {project}");
             PleasePressEnter();
         }
-        static void EditPerson(string optionName)
+        static void EditPerson(string optionName = "Edit person")
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
+            string person = GetPerson(optionName);
+            Console.WriteLine($"\n   Edit {person}");
+
             PleasePressEnter();
         }        
-        static void Quit(string optionName)
+        static void Quit(string optionName = "Close application")
         {
             Console.Clear();
             //int index = 1;
