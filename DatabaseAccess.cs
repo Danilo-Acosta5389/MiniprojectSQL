@@ -83,8 +83,7 @@ namespace MiniprojectSQL
             }
             catch (Exception e)
             {
-                Console.WriteLine();
-                Console.WriteLine("   " + e.Message);
+                General.ErrorInRed(e.Message);
                 return false;
             }
             return true;
@@ -102,8 +101,7 @@ namespace MiniprojectSQL
             }
             catch (Exception e)
             {
-                Console.WriteLine();
-                Console.WriteLine("   " + e.Message);
+                General.ErrorInRed(e.Message);
                 return false;
             }
             return true;
