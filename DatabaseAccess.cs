@@ -14,13 +14,30 @@ namespace MiniprojectSQL
     public class DatabaseAccess
     {
 
+        public static bool DeleteProjectName(string projectName)
+        {
+            try
+            {
+                using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+                {
+                    cnn.Execute($"DELETE FROM dac_project WHERE project_name = '{projectName}';");
+                }
+            }
+            catch (Exception e)
+            {
+                General.ErrorInRed(e.Message);
+                return false;
+            }
+            return true;
+        }
+
         public static bool DeletePersonName(string personName)
         {
             try
             {
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
-                    cnn.Execute("");
+                    cnn.Execute($"DELETE FROM dac_person WHERE person_name = '{personName}'; ");
                 }
             }
             catch (Exception e)

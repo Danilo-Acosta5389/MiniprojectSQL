@@ -32,7 +32,7 @@ namespace MiniprojectSQL
                 OR pass the array directly as argument like below
                 */
 
-                    int option = NavMenu(new List<string> { "Register hours in project", "New project", "New person", "Edit project", "Edit person",  "Quit" }, null,index); //Insert this in NavMenu() if Delete function gets added: "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m",
+                    int option = NavMenu(new List<string> { "Register hours in project", "New project", "New person", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mQuit" },index); 
 
                     //NavMenu will return the index of which option the user has picked
 
@@ -41,9 +41,9 @@ namespace MiniprojectSQL
                     else if (option == 2) NewPerson();
                     else if (option == 3) EditProject();
                     else if (option == 4) EditPerson();
-                    //else if (option == 5) DeleteProject();
-                    //else if (option == 6) DeletePerson();
-                    else if (option == 5) Quit();
+                    else if (option == 5) DeleteProject();
+                    else if (option == 6) DeletePerson();
+                    else if (option == 7) Quit();
                     index = option;
                 }
                 catch (Exception e)
@@ -70,7 +70,7 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
-        public static int NavMenu(List<string> options, List<PersonModel> person, int option = 0)
+        public static int NavMenu(List<string> options, int option = 0)
         {
             Console.CursorVisible = false;
             ConsoleKeyInfo key;
@@ -121,7 +121,7 @@ namespace MiniprojectSQL
             OptionTitleInRed(optionName);
             InstructionInYellow("Are you sure?");
             Console.WriteLine(message);
-            int option = NavMenu(new List<string> { "Yes", "No" }, null, index);
+            int option = NavMenu(new List<string> { "Yes", "No" }, index);
             return option;
         }
         
@@ -163,7 +163,7 @@ namespace MiniprojectSQL
             OptionTitleInRed(optionName);
             InstructionInYellow("Is this correct?");
             Console.WriteLine(message);
-            int yesOrNo = NavMenu(new List<string> { "Yes", "No" }, null, index);
+            int yesOrNo = NavMenu(new List<string> { "Yes", "No" }, index);
             if (yesOrNo == 0) return "yes";
             else return "no";
         }
@@ -178,7 +178,7 @@ namespace MiniprojectSQL
             List<string> personList = DatabaseAccess.GetPersonName();
             personList.Add("\u001b[0mBack to menu");
 
-            int personIndex = NavMenu(personList, null);
+            int personIndex = NavMenu(personList);
             if (personIndex != personList.Count - 1)
             {
                 return personList[personIndex];
@@ -200,7 +200,7 @@ namespace MiniprojectSQL
             List<string> projectList = DatabaseAccess.GetProjectName();
             projectList.Add("\u001b[0mBack to menu");
 
-            int projectIndex = NavMenu(projectList, null);
+            int projectIndex = NavMenu(projectList);
             if (projectIndex != projectList.Count - 1)
             {
                 return projectList[projectIndex];
@@ -420,12 +420,6 @@ namespace MiniprojectSQL
         }
 
 
-        
-
-        /*
-          
-                       //POTENTIAL FUTURE FUNCTION
-         
         static void DeleteProject(string optionName = "Delete project")
         {
             Console.Clear();
@@ -434,8 +428,28 @@ namespace MiniprojectSQL
 
             while (true)
             {
-                string project = GetProject(optionName, "Choose project to DELETE\n   WARNING DELETION IS PERMANENT!");
+                string project = GetProject(optionName, "Choose project to DELETE\n   Project with registered hours cannot be deleted\n\n   \u001b[31mWARNING: DELETION IS PERMANENT!");
                 if (project == "") break;
+                int yesNo = AreYouSure(optionName, $"   Do you wish to DELETE {project}?\n");
+                if (yesNo == 0)
+                {
+                    bool success = DatabaseAccess.DeleteProjectName(project);
+                    if (success == true)
+                    {
+                        SuccessInGreen("Greate success!");
+                        break;
+                    }
+                    else
+                    {
+                        ErrorInRed("Could not DELETE project");
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"\n   Canceling");
+                    break;
+                }
             }
             PleasePressEnter();
         }
@@ -449,24 +463,34 @@ namespace MiniprojectSQL
 
             while (true)
             {
-                string person = GetPerson(optionName, "Choose person to DELETE\n   WARNING DELETION IS PERMANENT!");
+                string person = GetPerson(optionName, "Choose person to DELETE\n   Person with registered hours cannot be deleted\n\n   \u001b[31mWARNING: DELETION IS PERMANENT!");
                 if (person == "") break;
                 int yesNo = AreYouSure(optionName, $"   Do you wish to DELETE {person}?\n");
                 if (yesNo == 0)
                 {
-
+                    bool success = DatabaseAccess.DeletePersonName(person);
+                    if (success == true)
+                    {
+                        SuccessInGreen("Greate success!");
+                        break;
+                    }
+                    else
+                    {
+                        ErrorInRed("Could not DELETE person");
+                        break;
+                    }
+                    
                 }
                 else
                 {
-
+                    Console.WriteLine($"\n   Canceling");
+                    break;
                 }
-                break;
-
             }
 
             PleasePressEnter();
         }
-        */
+        
 
         static void Quit(string optionName = "Quit")
         {
