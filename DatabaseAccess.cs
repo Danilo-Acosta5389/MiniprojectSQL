@@ -20,10 +20,13 @@ namespace MiniprojectSQL
             {
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
-                    cnn.Execute(@$"insert into dac_project_person (project_id, person_id, hours) 
-                    values 
-                    ((SELECT id from dac_project WHERE project_name = '{project_name}') , 
-                    (select id from dac_person WHERE person_name = '{person_name}') , {hours});");
+                    cnn.Execute(@$"
+                          BEGIN;
+                              insert into dac_project_person (project_id, person_id, hours) 
+                              values 
+                              ((SELECT id from dac_project WHERE project_name = '{project_name}') , 
+                              (select id from dac_person WHERE person_name = '{person_name}') , {hours});
+                          COMMIT;");
                 }
             }
             catch (Exception e)
