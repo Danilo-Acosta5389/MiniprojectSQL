@@ -14,6 +14,44 @@ namespace MiniprojectSQL
     public class DatabaseAccess
     {
 
+        public static bool EditProjectName(string oldName, string newName)
+        {
+            try
+            {
+                using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+                {
+                    cnn.Execute($"UPDATE dac_project SET project_name = '{newName}' WHERE project_name = '{oldName}'");
+
+                }
+            }
+            catch (Exception e)
+            {
+                General.ErrorInRed(e.Message);
+                return false;
+            }
+            return true;
+        }
+
+
+        public static bool EditPersontName(string oldName, string newName)
+        {
+            try
+            {
+                using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+                {
+                    cnn.Execute($"UPDATE dac_person SET person_name = '{newName}' WHERE person_name = '{oldName}'");
+
+                }
+            }
+            catch (Exception e)
+            {
+                General.ErrorInRed(e.Message);
+                return false;
+            }
+            return true;
+        }
+
+
         public static bool RegistrateHoursInDB(string project_name, string person_name, int hours)
         {
             try
@@ -22,10 +60,10 @@ namespace MiniprojectSQL
                 {
                     cnn.Execute(@$"
                           BEGIN;
-                              insert into dac_project_person (project_id, person_id, hours) 
-                              values 
-                              ((SELECT id from dac_project WHERE project_name = '{project_name}') , 
-                              (select id from dac_person WHERE person_name = '{person_name}') , {hours});
+                              INSERT INTO dac_project_person (project_id, person_id, hours) 
+                              VALUES 
+                              ((SELECT id FROM dac_project WHERE project_name = '{project_name}') , 
+                              (SELECT id FROM dac_person WHERE person_name = '{person_name}') , {hours});
                           COMMIT;");
                 }
             }
