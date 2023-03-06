@@ -22,7 +22,7 @@ namespace MiniprojectSQL
                 Console.Clear();
                 TitleScreen();
                 InstructionInYellow("\n   Please use UP and DOWN arrows to navigate\n   Press ENTER to select\n");
-                
+
                 try
                 {
                     /*
@@ -32,7 +32,7 @@ namespace MiniprojectSQL
                 OR pass the array directly as argument like below
                 */
 
-                    int option = NavMenu(new List<string> { "Register hours in project", "New project", "New person", "Edit project", "Edit person", "Quit" }, index);
+                    int option = NavMenu(new List<string> { "Register hours in project", "New project", "New person", "Edit project", "Edit person",  "Quit" }, null,index); //Insert this in NavMenu() if Delete function gets added: "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m",
 
                     //NavMenu will return the index of which option the user has picked
 
@@ -41,6 +41,8 @@ namespace MiniprojectSQL
                     else if (option == 2) NewPerson();
                     else if (option == 3) EditProject();
                     else if (option == 4) EditPerson();
+                    //else if (option == 5) DeleteProject();
+                    //else if (option == 6) DeletePerson();
                     else if (option == 5) Quit();
                     index = option;
                 }
@@ -68,7 +70,7 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
-        public static int NavMenu(List<string> options, int option = 0)
+        public static int NavMenu(List<string> options, List<PersonModel> person, int option = 0)
         {
             Console.CursorVisible = false;
             ConsoleKeyInfo key;
@@ -112,10 +114,14 @@ namespace MiniprojectSQL
             Console.WriteLine();
         }
 
-        public static int AreYouSure(int index = 0)
+        public static int AreYouSure(string optionName, string message, int index = 0)
         {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
             InstructionInYellow("Are you sure?");
-            int option = NavMenu(new List<string> { "Yes", "No" }, index);
+            Console.WriteLine(message);
+            int option = NavMenu(new List<string> { "Yes", "No" }, null, index);
             return option;
         }
         
@@ -150,29 +156,29 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
-        public static string IsCorrect(string optionName , string message, int index = 0)
+        public static string IsCorrect(string optionName , string message = "[Insert message]", int index = 0)
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
             InstructionInYellow("Is this correct?");
             Console.WriteLine(message);
-            int yesOrNo = NavMenu(new List<string> { "Yes", "No" }, index);
+            int yesOrNo = NavMenu(new List<string> { "Yes", "No" }, null, index);
             if (yesOrNo == 0) return "yes";
             else return "no";
         }
 
-        public static string GetPerson(string optionName)
+        public static string GetPerson(string optionName, string message = "Choose person")
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("Choose a person");
+            InstructionInYellow(message);
 
             List<string> personList = DatabaseAccess.GetPersonName();
             personList.Add("\u001b[0mBack to menu");
 
-            int personIndex = NavMenu(personList);
+            int personIndex = NavMenu(personList, null);
             if (personIndex != personList.Count - 1)
             {
                 return personList[personIndex];
@@ -184,17 +190,17 @@ namespace MiniprojectSQL
             }
         }
 
-        public static string GetProject(string optionName)
+        public static string GetProject(string optionName, string message = "Choose project")
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("Choose project");
+            InstructionInYellow(message);
 
             List<string> projectList = DatabaseAccess.GetProjectName();
             projectList.Add("\u001b[0mBack to menu");
 
-            int projectIndex = NavMenu(projectList);
+            int projectIndex = NavMenu(projectList, null);
             if (projectIndex != projectList.Count - 1)
             {
                 return projectList[projectIndex];
@@ -223,22 +229,30 @@ namespace MiniprojectSQL
                 string project = GetProject(optionName);
                 if (project == "") { break; }
 
-                InstructionInYellow("Input hours spent on project today\n   Leave blank to go back");
+                InstructionInYellow("Input hours spent on project today\n   Leave blank to cancel");
 
                 Console.CursorVisible = true;
                 Console.Write(" ==> ");
-                int hours = int.Parse(Console.ReadLine());
+                string hours = Console.ReadLine();
+                if (hours == "")
+                {
+                    Console.WriteLine("\n    Canceling");
+                    break;
+                }
+                int newHours = Convert.ToInt32(hours);
                 Console.CursorVisible = false;
+
+
                 //Console.WriteLine($"\n   \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
-                string message = $"\n   \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today\n";
+                string message = $"\n   \u001b[1m{person}\u001b[0m spent \u001b[1m{newHours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today\n";
                 string yesNo = IsCorrect(optionName ,message);
                 if (yesNo == "yes")
                 {
-                    bool success = DatabaseAccess.RegistrateHoursInDB(project, person, hours);
+                    bool success = DatabaseAccess.RegistrateHoursInDB(project, person, newHours);
                     if (success)
                     {
                         SuccessInGreen("Great success!");
-                        Console.WriteLine($"\n   \u001b[1mRegistered\u001b[0m: \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
+                        Console.WriteLine($"\n   \u001b[1mRegistered\u001b[0m: \u001b[1m{person}\u001b[0m spent \u001b[1m{newHours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
 
                     }
                     else
@@ -259,21 +273,31 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("Please input project name\n   Leave blank to exit");
-            Console.CursorVisible = true;
-
-            Console.Write("\n   Project name: ");
-            string projectName = Console.ReadLine();
-            Console.CursorVisible = false;
-            bool success = DatabaseAccess.InsertNewProject(projectName);
-            if (success == true) 
+            InstructionInYellow("Please input project name\n   Leave blank to cancel");
+            while (true)
             {
-                SuccessInGreen("Project successfully added!");
+                Console.CursorVisible = true;
+                Console.Write("\n   Project name: ");
+                string projectName = Console.ReadLine();
+                if (projectName == "")
+                {
+                    Console.WriteLine("\n   Canceling");
+                    break;
+                }
+                Console.CursorVisible = false;
+                bool success = DatabaseAccess.InsertNewProject(projectName);
+                if (success == true)
+                {
+                    SuccessInGreen("Project successfully added!");
+                    break;
+                }
+                else
+                {
+                    ErrorInRed("Unsuccessful to add new project");
+                    break;
+                }
             }
-            else 
-            {
-                ErrorInRed("Unsuccessful to add new project");
-            }
+            
             PleasePressEnter();
         }
         static void NewPerson(string optionName = "Add new person")
@@ -281,22 +305,33 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("Please input person name\n   Leave blank to exit");
-            Console.CursorVisible = true;
+            InstructionInYellow("Please input person name\n   Leave blank to cancel");
 
-            Console.Write("\n   Person name: ");
-            string personName = Console.ReadLine();
-            Console.CursorVisible = false;
+            while(true)
+            {
+                Console.CursorVisible = true;
+                Console.Write("\n   Person name: ");
+                string personName = Console.ReadLine();
+                if (personName == "")
+                {
+                    Console.WriteLine("\n   Canceling");
+                    break;
+                }
+                Console.CursorVisible = false;
 
-            bool success = DatabaseAccess.InsertNewPerson(personName);
-            if (success == true) 
-            {
-                SuccessInGreen("Person successfully added!");
+                bool success = DatabaseAccess.InsertNewPerson(personName);
+                if (success == true)
+                {
+                    SuccessInGreen("Person successfully added!");
+                    break;
+                }
+                else
+                {
+                    ErrorInRed("Unsuccessful to add new person");
+                    break;
+                }
             }
-            else 
-            {
-                ErrorInRed("Unsuccessful to add new person");
-            }
+
             PleasePressEnter();
         }
         static void EditProject(string optionName = "Edit project")
@@ -304,8 +339,42 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            string project = GetProject(optionName);
-            Console.WriteLine($"\n   Edit {project}");
+            bool isRunning = true;
+            while (isRunning)
+            {
+                string projectName = GetProject(optionName);
+                if (projectName == "") { break; }
+                Console.WriteLine($"\n   Edit \u001b[1m{projectName}\u001b[0m");
+
+                InstructionInYellow("Please input new project name\n   Leave blank to cancel");
+                Console.CursorVisible = true;
+                Console.Write(" ==> ");
+                string newName = Console.ReadLine();
+                Console.CursorVisible = false;
+                if (newName == "")
+                {
+                    Console.WriteLine($"\n   Canceling");
+                    break;
+                }
+                string message = $"\n   Change \u001b[1m{projectName}\u001b[0m to \u001b[1m{newName}\u001b[0m\n";
+                string yesNo = IsCorrect(optionName, message);
+                if(yesNo == "yes")
+                {
+                    bool success = DatabaseAccess.EditProjectName(projectName ,newName);
+                    if (success == true) 
+                    { 
+                        SuccessInGreen("Project name was successfully changed!");
+                        isRunning = false;
+                    }
+                    else
+                    {
+                        ErrorInRed("Project name was not changed");
+                    }
+                }
+            }
+            
+            
+            //
             PleasePressEnter();
         }
         static void EditPerson(string optionName = "Edit person")
@@ -313,18 +382,99 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            string person = GetPerson(optionName);
-            Console.WriteLine($"\n   Edit {person}");
+            bool isRunning = true;
+            while (isRunning)
+            {
+                string personName = GetPerson(optionName);
+                if (personName == "") { break; }
+                Console.WriteLine($"\n   Edit \u001b[1m{personName}\u001b[0m");
+
+                InstructionInYellow("Please input new person name\n   Leave blank to cancel");
+                Console.CursorVisible = true;
+                Console.Write(" ==> ");
+                string newName = Console.ReadLine();
+                Console.CursorVisible = false;
+                if (newName == "")
+                {
+                    Console.WriteLine($"\n   Canceling");
+                    break;
+                }
+                string message = $"\n   Change \u001b[1m{personName}\u001b[0m to \u001b[1m{newName}\u001b[0m\n";
+                string yesNo = IsCorrect(optionName, message);
+                if (yesNo == "yes")
+                {
+                    bool success = DatabaseAccess.EditPersontName(personName, newName);
+                    if (success == true)
+                    {
+                        SuccessInGreen("Project name was successfully changed!");
+                        isRunning = false;
+                    }
+                    else
+                    {
+                        ErrorInRed("Project name was not changed");
+                    }
+                }
+            }
+
+                PleasePressEnter();
+        }
+
+
+        
+
+        /*
+          
+                       //POTENTIAL FUTURE FUNCTION
+         
+        static void DeleteProject(string optionName = "Delete project")
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+
+            while (true)
+            {
+                string project = GetProject(optionName, "Choose project to DELETE\n   WARNING DELETION IS PERMANENT!");
+                if (project == "") break;
+            }
+            PleasePressEnter();
+        }
+        
+
+        static void DeletePerson(string optionName = "Delete person")
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+
+            while (true)
+            {
+                string person = GetPerson(optionName, "Choose person to DELETE\n   WARNING DELETION IS PERMANENT!");
+                if (person == "") break;
+                int yesNo = AreYouSure(optionName, $"   Do you wish to DELETE {person}?\n");
+                if (yesNo == 0)
+                {
+
+                }
+                else
+                {
+
+                }
+                break;
+
+            }
 
             PleasePressEnter();
-        }        
-        static void Quit(string optionName = "Close application")
+        }
+        */
+
+        static void Quit(string optionName = "Quit")
         {
             Console.Clear();
             //int index = 1;
             TitleScreen();
             OptionTitleInRed(optionName);
-            int option = AreYouSure();
+            int option = AreYouSure(optionName, "   Close the application?\n");
             if (option == 0) Environment.Exit(0);
         }
     }
