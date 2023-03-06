@@ -143,6 +143,13 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
+        public static void SuccessInGreen(string input)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\n    {input}\n");
+            Console.ResetColor();
+        }
+
         public static string IsCorrect(int index = 0)
         {
             InstructionInYellow("Is this correct?");
@@ -164,7 +171,6 @@ namespace MiniprojectSQL
             int personIndex = NavMenu(personList);
             if (personIndex != personList.Count - 1)
             {
-                //Console.WriteLine($"\n   You choosed: \x1b[1m{personList[personIndex]}\x1b[0m\n");
                 return personList[personIndex];
             }
             else
@@ -187,7 +193,6 @@ namespace MiniprojectSQL
             int projectIndex = NavMenu(projectList);
             if (projectIndex != projectList.Count - 1)
             {
-                //Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
                 return projectList[projectIndex];
             }
             else
@@ -224,9 +229,7 @@ namespace MiniprojectSQL
                 bool success = DatabaseAccess.RegistrateHoursInDB(project, person, hours);
                 if (success)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("\n    Great success!");
-                    Console.ResetColor();
+                    SuccessInGreen("Great success!");
                     Console.WriteLine($"\n   Registered: \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
                     
                 }
@@ -237,54 +240,6 @@ namespace MiniprojectSQL
                 isRunning = false;
             }
             PleasePressEnter();
-
-
-
-
-
-
-            //IsCorrect();
-
-
-            /*
-            bool isRunning = true;
-            while (isRunning)
-            {
-
-                InstructionInYellow("Choose a person");
-
-
-                int personIndex = NavMenu(personList);
-                Console.WriteLine($"\n   You choosed: \x1b[1m{personList[personIndex]}\x1b[0m\n");
-                //if (personIndex != personArr.Length - 1)
-                //{
-                //    Console.WriteLine($"\n   You choosed: \x1b[1m{personArr[personIndex]}\x1b[0m\n");
-                //}
-                //personList.Clear();
-
-
-                InstructionInYellow("Choose project");
-
-                int projectIndex = NavMenu(projectList);
-                Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
-                //if (projectIndex != projectArr.Length - 1)
-                //{
-                //    Console.WriteLine($"\n   You choosed: \x1b[1m{projectArr[projectIndex]}\x1b[0m\n");
-                //}
-                //projectList.Clear();
-
-                InstructionInYellow("Input hours spent on project today\n   Leave blank to go back");
-                Console.CursorVisible = true;
-                Console.Write(" ==> ");
-                int hours = int.Parse(Console.ReadLine());
-                Console.CursorVisible = false;
-                Console.WriteLine($"\n   Registered: \u001b[1m{personList[personIndex]}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{projectList[projectIndex]}\u001b[0m today");
-                IsCorrect();
-                PleasePressEnter();
-
-            }
-            */
-
         }
 
 
@@ -301,9 +256,7 @@ namespace MiniprojectSQL
             bool success = DatabaseAccess.InsertNewProject(projectName);
             if (success == true) 
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n    Project successfully added!");
-                Console.ResetColor();
+                SuccessInGreen("Project successfully added!");
             }
             else 
             {
@@ -324,10 +277,8 @@ namespace MiniprojectSQL
 
             bool success = DatabaseAccess.InsertNewPerson(personName);
             if (success == true) 
-            { 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n    Person successfully added!");
-                Console.ResetColor();
+            {
+                SuccessInGreen("Person successfully added!");
             }
             else 
             {
