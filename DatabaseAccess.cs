@@ -14,6 +14,24 @@ namespace MiniprojectSQL
     public class DatabaseAccess
     {
 
+        public static bool DeletePersonName(string personName)
+        {
+            try
+            {
+                using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+                {
+                    cnn.Execute("");
+                }
+            }
+            catch (Exception e)
+            {
+                General.ErrorInRed(e.Message);
+                return false;
+            }
+            return true;
+        }
+
+
         public static bool EditProjectName(string oldName, string newName)
         {
             try
@@ -21,7 +39,6 @@ namespace MiniprojectSQL
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
                     cnn.Execute($"UPDATE dac_project SET project_name = '{newName}' WHERE project_name = '{oldName}'");
-
                 }
             }
             catch (Exception e)

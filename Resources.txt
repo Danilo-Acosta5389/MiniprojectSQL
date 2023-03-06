@@ -85,3 +85,64 @@
         BGmagenta = "\x1b[45m"
         BGcyan = "\x1b[46m"
         BGwhite = "\x1b[47m"
+
+
+
+
+        //TESTING OUT SOME TABLE OPTIONS
+
+        /*
+                
+                string table = @"
+ ______________________________________________
+|     Project   |     Person    |    Hours     |
+|---------------|---------------|--------------|
+| Chatbot-proj  |    Danilo     |      8       |
+|---------------|---------------|--------------|
+|  PiedPiper    |    Ada        |      7       |
+|---------------|---------------|--------------|
+|    Aviato     |    Alan       |      5       |
+|_______________|_______________|______________|
+
+";
+                //Console.WriteLine(table);
+                string strProjekt = "Projekt";
+                string strPerson = "Person";
+                string strHours = "Hours";
+                string table2 = @$"
+           
+         
+
+╔═══════════════╦════════════════════╦═══════════╗
+║    "+ strProjekt + @"    ║       " +strPerson+ @"       ║   "+strHours+@"   ║
+╠═══════════════╬════════════════════╬═══════════╣
+║               ║                    ║           ║
+╠═══════════════╬════════════════════╬═══════════╣
+║               ║                    ║           ║
+╠═══════════════╬════════════════════╬═══════════╣
+║               ║                    ║           ║
+╚═══════════════╩════════════════════╩═══════════╝";
+                //OptionTitleInRed("Table");
+                //Console.WriteLine(table2);
+
+                string table3 = @"
+        Projekt         Person          Hours
+   -----------------------------------------------
+      IOSapp           Danilo             8
+      AndroidApp       Ada                9
+      Website          Alan               6
+";
+                //Console.WriteLine(table3);
+
+                */
+
+
+                Visualise table with project, person and hours
+
+SELECT dac_project_person.id, dac_project.project_name,
+dac_person.person_name, dac_project_person.hours
+FROM dac_project_person
+LEFT JOIN dac_project
+ON  dac_project_person.project_id = dac_project.id
+LEFT JOIN dac_person
+ON dac_project_person.person_id = dac_person.id;
