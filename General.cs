@@ -32,18 +32,18 @@ namespace MiniprojectSQL
                 OR pass the array directly as argument like below
                 */
 
-                    int option = NavMenu(new List<string> { "Register hours in project", "New project", "New person", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mQuit" },index); 
+                    int option = NavMenu(new List<string> { "Work Time Tracker" , "Register hours in project", "New project", "New person", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mQuit" },index);
 
                     //NavMenu will return the index of which option the user has picked
-
-                    if (option == 0) RegTime();
-                    else if (option == 1) NewProject();
-                    else if (option == 2) NewPerson();
-                    else if (option == 3) EditProject();
-                    else if (option == 4) EditPerson();
-                    else if (option == 5) DeleteProject();
-                    else if (option == 6) DeletePerson();
-                    else if (option == 7) Quit();
+                    if (option == 0) WorkTimeTrack();
+                    else if (option == 1) RegTime();
+                    else if (option == 2) NewProject();
+                    else if (option == 3) NewPerson();
+                    else if (option == 4) EditProject();
+                    else if (option == 5) EditPerson();
+                    else if (option == 6) DeleteProject();
+                    else if (option == 7) DeletePerson();
+                    else if (option == 8) Quit();
                     index = option;
                 }
                 catch (Exception e)
@@ -210,6 +210,33 @@ namespace MiniprojectSQL
                 Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
                 return "";
             }
+            
+        }
+
+
+        public static void WorkTimeTrack(string optionName = "Work Time Tracker")
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            List<ProjectPersonModel> workTrackList = DatabaseAccess.GetProjectPersonList();
+            while (true)
+            {
+                Console.WriteLine("\n    _________________________________________");
+                Console.WriteLine("   | {0,-15}  | {1, -10}  |  {2,-5} |", "Project", "Person", "Hours");
+                Console.WriteLine("   |-----------------------------------------|");
+                for (int i = 0; i < workTrackList.Count; i++)
+                {
+
+                    Console.WriteLine("   | {0,-15}  | {1, -10}  |   {2,-5}|", workTrackList[i].project_name, workTrackList[i].person_name, workTrackList[i].hours);
+                    Console.WriteLine("   |-----------------------------------------|");
+                }
+                PleasePressEnter();
+                break;
+            }
+
+
+
             
         }
 

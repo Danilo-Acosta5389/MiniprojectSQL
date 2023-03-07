@@ -14,6 +14,24 @@ namespace MiniprojectSQL
     public class DatabaseAccess
     {
 
+
+        public static List<ProjectPersonModel> GetProjectPersonList()
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+                var output = cnn.Query<ProjectPersonModel>(@"
+                        SELECT dac_project_person.id, dac_project.project_name,
+                                dac_person.person_name, dac_project_person.hours
+                        FROM dac_project_person
+                        LEFT JOIN dac_project
+                        ON  dac_project_person.project_id = dac_project.id
+                        LEFT JOIN dac_person
+                        ON dac_project_person.person_id = dac_person.id;", new DynamicParameters());
+                return output.ToList();
+
+            }
+        }
+
         public static bool DeleteProjectName(string projectName)
         {
             try
