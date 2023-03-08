@@ -338,7 +338,7 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("\n   Table of all projects, persons and working hours\n   Total amount of working hours at the bottom");
+            InstructionInYellow("\n   Table of all projects, persons and registered hours\n   Total amount of registered hours at the bottom");
             List<ProjectPersonModel> workTrackList = DatabaseAccess.GetProjectPersonList();
             Console.ForegroundColor = ConsoleColor.White;
             while (true)
