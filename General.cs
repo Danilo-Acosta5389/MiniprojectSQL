@@ -32,18 +32,19 @@ namespace MiniprojectSQL
                 OR pass the array directly as argument like below
                 */
 
-                    int option = NavMenu(new List<string> { "Work Time Tracker" , "Register hours in project", "New project", "New person", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mQuit" },index);
+                    int option = NavMenu(new List<string> { "Work Time Tracker" , "Register hours in project", "New project", "New person", "Edit registered hours", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mQuit" },index);
 
                     //NavMenu will return the index of which option the user has picked
                     if (option == 0) WorkTimeTrack();
                     else if (option == 1) RegTime();
                     else if (option == 2) NewProject();
                     else if (option == 3) NewPerson();
-                    else if (option == 4) EditProject();
-                    else if (option == 5) EditPerson();
-                    else if (option == 6) DeleteProject();
-                    else if (option == 7) DeletePerson();
-                    else if (option == 8) Quit();
+                    else if (option == 4) EditRegHours();
+                    else if (option == 5) EditProject();
+                    else if (option == 6) EditPerson();
+                    else if (option == 7) DeleteProject();
+                    else if (option == 8) DeletePerson();
+                    else if (option == 9) Quit();
                     index = option;
                 }
                 catch (Exception e)
@@ -84,6 +85,40 @@ namespace MiniprojectSQL
                 for (int i = 0; i < options.Count; i++)
                 {
                     Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i]}");
+                }
+                key = Console.ReadKey(true);
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        option = (option == options.Count - 1 ? option = 0 : option + 1);
+                        break;
+                    case ConsoleKey.UpArrow:
+                        option = (option == 0 ? option = options.Count - 1 : option - 1);
+                        break;
+                    case ConsoleKey.Enter:
+                        selectedOption = true;
+                        break;
+                }
+            }
+            Console.ResetColor();
+            return option;
+        }
+
+
+        public static int CustomNavMenu(List<ProjectPersonModel> options = null, List<PersonModel> person = null, List<ProjectModel> project = null, int option = 0)
+        {
+            Console.CursorVisible = false;
+            ConsoleKeyInfo key;
+            (int left, int top) = Console.GetCursorPosition();
+            string cursor = " -> ";
+            bool selectedOption = false;
+            while (!selectedOption)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.SetCursorPosition(left, top);
+                for (int i = 0; i < options.Count; i++)
+                {
+                    Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i].project_name} {options[i].person_name} {options[i].hours}");
                 }
                 key = Console.ReadKey(true);
                 switch (key.Key)
@@ -504,6 +539,21 @@ namespace MiniprojectSQL
             }
 
             PleasePressEnter();
+        }
+
+        static void EditRegHours(string optionName = "Edit registered hours")
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            List<ProjectPersonModel> allHoursList = DatabaseAccess.GetProjectPersonList();
+            bool isRunning = true;
+            while (isRunning)
+            {
+                int option = CustomNavMenu(allHoursList);
+                PleasePressEnter();
+                break;
+            }
         }
         static void EditProject(string optionName = "Edit project")
         {

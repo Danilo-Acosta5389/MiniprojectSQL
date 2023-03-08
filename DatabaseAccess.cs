@@ -121,6 +121,24 @@ namespace MiniprojectSQL
         }
 
 
+        public static bool EditRegisteredHours(int id)
+        {
+            try
+            {
+                using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+                {
+                    cnn.Execute($"UPDATE dac_project_person SET hours = 10 WHERE id = {id};");
+                }
+            }
+            catch (Exception e)
+            {
+                General.ErrorInRed(e.Message);
+                return false;
+            }
+            return true;
+        }
+
+
         public static bool EditProjectName(string oldName, string newName)
         {
             try
