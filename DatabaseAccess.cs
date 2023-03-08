@@ -14,6 +14,60 @@ namespace MiniprojectSQL
     public class DatabaseAccess
     {
 
+        
+        public static List<ProjectPersonModel> GetPersonOnOneProject(string person, string project)
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+                var output = cnn.Query<ProjectPersonModel>(@$"
+                        SELECT dac_project_person.id, dac_person.person_name,
+                        dac_project.project_name, dac_project_person.hours
+                        FROM dac_project_person 
+                        LEFT JOIN dac_person
+                        ON  dac_project_person.person_id = dac_person.id 
+                        LEFT JOIN dac_project
+                        ON dac_project_person.project_id = dac_project.id
+                        WHERE dac_person.id = (SELECT id FROM dac_person WHERE person_name = '{person}')
+                        AND dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}');", new DynamicParameters());
+                return output.ToList();
+            }
+        }
+
+
+        public static List<ProjectPersonModel> GetPersonWithManyProjects(string person)
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+                var output = cnn.Query<ProjectPersonModel>(@$"
+                        SELECT dac_project_person.id, dac_person.person_name,
+                        dac_project.project_name, dac_project_person.hours
+                        FROM dac_project_person 
+                        LEFT JOIN dac_person
+                        ON  dac_project_person.person_id = dac_person.id 
+                        LEFT JOIN dac_project
+                        ON dac_project_person.project_id = dac_project.id
+                        WHERE dac_person.id = (SELECT id FROM dac_person WHERE person_name = '{person}');", new DynamicParameters());
+                return output.ToList();
+            }
+        }
+
+
+        public static List<ProjectPersonModel> GetProjectWithMany(string project)
+        {
+            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
+            {
+                var output = cnn.Query<ProjectPersonModel>(@$"
+                            SELECT dac_project_person.id, dac_project.project_name , dac_person.person_name
+                            , dac_project_person.hours
+                            FROM dac_project_person 
+                            LEFT JOIN dac_project
+                            ON dac_project_person.project_id = dac_project.id
+                            LEFT JOIN dac_person
+                            ON  dac_project_person.person_id = dac_person.id 
+                            WHERE dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}');", new DynamicParameters());
+                return output.ToList();
+            }
+        }
 
         public static List<ProjectPersonModel> GetProjectPersonList()
         {

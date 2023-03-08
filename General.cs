@@ -70,7 +70,7 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
-        public static int NavMenu(List<string> options, int option = 0)
+        public static int NavMenu( List<string> options, int option = 0)
         {
             Console.CursorVisible = false;
             ConsoleKeyInfo key;
@@ -190,7 +190,7 @@ namespace MiniprojectSQL
             }
         }
 
-        public static string GetProject(string optionName, string message = "Choose project")
+        public static string GetProject(string optionName, string message = "Choose project", int index = 0)
         {
             Console.Clear();
             TitleScreen();
@@ -200,7 +200,7 @@ namespace MiniprojectSQL
             List<string> projectList = DatabaseAccess.GetProjectName();
             projectList.Add("\u001b[0mBack to menu");
 
-            int projectIndex = NavMenu(projectList);
+            int projectIndex = NavMenu(projectList, index);
             if (projectIndex != projectList.Count - 1)
             {
                 return projectList[projectIndex];
@@ -213,31 +213,175 @@ namespace MiniprojectSQL
             
         }
 
-
-        public static void WorkTimeTrack(string optionName = "Work Time Tracker")
+        static void PersonOnAProject(string optionName)
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            List<ProjectPersonModel> workTrackList = DatabaseAccess.GetProjectPersonList();
-            while (true)
+            string person = GetPerson(optionName, "\n   Choose person");
+            if (person != "")
             {
-                Console.WriteLine("\n    _________________________________________");
-                Console.WriteLine("   | {0,-15}  | {1, -10}  |  {2,-5} |", "Project", "Person", "Hours");
-                Console.WriteLine("   |-----------------------------------------|");
-                for (int i = 0; i < workTrackList.Count; i++)
+                while (true)
                 {
-
-                    Console.WriteLine("   | {0,-15}  | {1, -10}  |   {2,-5}|", workTrackList[i].project_name, workTrackList[i].person_name, workTrackList[i].hours);
-                    Console.WriteLine("   |-----------------------------------------|");
+                    string project = GetProject(optionName, "\n   Choose project");
+                    if (project != "")
+                    {
+                        Console.Clear();
+                        TitleScreen();
+                        OptionTitleInRed(optionName);
+                        InstructionInYellow($"\n   Table of {person} and hours registered on the {project} project");
+                        List<ProjectPersonModel> personProjectList = DatabaseAccess.GetPersonOnOneProject(person, project);
+                        var x = personProjectList;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine("    __________________________________________");
+                        Console.WriteLine("   | {0,-10}  | {1, -15}  |  {2,-5}  |", "Person", "Project", "Hours");
+                        Console.WriteLine("   |-------------|------------------|---------|");
+                        int sum = 0;
+                        for (int i = 0; i < x.Count; i++)
+                        {
+                            Console.WriteLine("   | {0,-10}  | {1, -15}  |   {2,-5} |", x[i].person_name, x[i].project_name, x[i].hours);
+                            Console.WriteLine("   |-------------|------------------|---------|");
+                            sum = sum += x[i].hours;
+                        }
+                        Console.WriteLine("   | {0,-10}  | {1, -10}       |   {2,-5} |", "TOTAL", "hours:", sum, "");
+                        Console.WriteLine("   |__________________________________________|");
+                        Console.ResetColor();
+                        PleasePressEnter();
+                    }
+                    else break;
                 }
-                PleasePressEnter();
-                break;
             }
 
+        }
+
+        static void PersonOnMultipleProjects(string optionName)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            while (true)
+            {
+                string person = GetPerson(optionName, "\n   Choose person");
+                if (person != "")
+                {
+                    Console.Clear();
+                    TitleScreen();
+                    OptionTitleInRed(optionName);
+                    InstructionInYellow($"\n   Table of {person} and hours registered on different projects");
+                    List<ProjectPersonModel> personMultiProjectList = DatabaseAccess.GetPersonWithManyProjects(person);
+                    var x = personMultiProjectList;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("    __________________________________________");
+                    Console.WriteLine("   | {0,-10}  | {1, -15}  |  {2,-5}  |", "Person", "Project", "Hours");
+                    Console.WriteLine("   |-------------|------------------|---------|");
+                    int sum = 0;
+                    for (int i = 0; i < x.Count; i++)
+                    {
+                        Console.WriteLine("   | {0,-10}  | {1, -15}  |   {2,-5} |", x[i].person_name, x[i].project_name, x[i].hours);
+                        Console.WriteLine("   |-------------|------------------|---------|");
+                        sum = sum += x[i].hours;
+                    }
+                    Console.WriteLine("   | {0,-10}  | {1, -10}       |   {2,-5} |", "TOTAL", "hours:", sum, "");
+                    Console.WriteLine("   |__________________________________________|");
+                    Console.ResetColor();
+                    PleasePressEnter();
+                    
+                }
+                else break;
+            }
+
+        }
+
+        static void ProjectWithMultiplePersons(string optionName)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            int index = 0;
+            while (true)
+            {
+                string project = GetProject(optionName, "Choose project", index);
+                if (project != "")
+                {
+                    Console.Clear();
+                    TitleScreen();
+                    OptionTitleInRed(optionName);
+                    InstructionInYellow($"\n   Table of the {project} project\n   and everyone that has registered hours on it");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    List<ProjectPersonModel> projectMultiPersonList = DatabaseAccess.GetProjectWithMany(project);
+                    var x = projectMultiPersonList;
+                    Console.WriteLine("    __________________________________________");
+                    Console.WriteLine("   | {0,-15}  | {1, -10}  |  {2,-5}  |", "Project", "Person", "Hours");
+                    Console.WriteLine("   |------------------|-------------|---------|");
+                    int sum = 0;
+                    for (int i = 0; i < x.Count; i++)
+                    {
+                        Console.WriteLine("   | {0,-15}  | {1, -10}  |   {2,-5} |", x[i].project_name, x[i].person_name, x[i].hours);
+                        Console.WriteLine("   |------------------|-------------|---------|");
+                        sum = sum += x[i].hours;
+                    }
+                    Console.WriteLine("   | {0,-15}  | {1, -10}  |   {2,-5} |", "TOTAL", "hours:", sum, "");
+                    Console.WriteLine("   |__________________________________________|");
+                    Console.ResetColor();
+                    PleasePressEnter();
+                }
+                else break;
 
 
+            }
+            PleasePressEnter();
             
+        }
+
+        static void AllProjectsAllPersons(string optionName)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            InstructionInYellow("\n   Table of all projects, persons and working hours\n   Total amount of working hours at the bottom");
+            List<ProjectPersonModel> workTrackList = DatabaseAccess.GetProjectPersonList();
+            Console.ForegroundColor = ConsoleColor.White;
+            while (true)
+            {
+                Console.WriteLine("\n    __________________________________________");
+                Console.WriteLine("   | {0,-15}  | {1, -10}  |  {2,-5}  |", "Project", "Person", "Hours");
+                Console.WriteLine("   |------------------|-------------|---------|");
+                int sum = 0;
+                for (int i = 0; i < workTrackList.Count; i++)
+                {
+                    Console.WriteLine("   | {0,-15}  | {1, -10}  |   {2,-5} |", workTrackList[i].project_name, workTrackList[i].person_name, workTrackList[i].hours);
+                    Console.WriteLine("   |------------------|-------------|---------|");
+                    sum = sum += workTrackList[i].hours;
+                }
+                Console.WriteLine("   | {0,-15}  | {1, -10}  |   {2,-5} |", "TOTAL", "hours:", sum, "");
+                Console.WriteLine("   |__________________________________________|");
+
+                break;
+            }
+            Console.ResetColor();
+            PleasePressEnter();
+        }
+
+        public static void WorkTimeTrack(string optionName = "Work Time Tracker")
+        {
+            int index = 0;
+            while (true)
+            {
+                Console.Clear();
+                TitleScreen();
+                OptionTitleInRed(optionName);
+                InstructionInYellow("\n   Track hours spent on project\n");
+
+                int option = NavMenu(new List<string> { "Person on a project", "Person on multiple projects", "Project with multiple person", "All projects and persons", "\u001b[0mBack to menu" }, index);
+                if (option == 0) PersonOnAProject(optionName);
+                else if (option == 1) PersonOnMultipleProjects(optionName);
+                else if (option == 2) ProjectWithMultiplePersons(optionName);
+                else if (option == 3) AllProjectsAllPersons(optionName);
+                else if (option == 4) break;
+                index = option;
+            }
+            PleasePressEnter();
+
         }
 
 
