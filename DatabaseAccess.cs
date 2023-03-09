@@ -28,7 +28,7 @@ namespace MiniprojectSQL
                         LEFT JOIN dac_project
                         ON dac_project_person.project_id = dac_project.id
                         WHERE dac_person.id = (SELECT id FROM dac_person WHERE person_name = '{person}')
-                        AND dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}');", new DynamicParameters());
+                        AND dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}') ORDER BY dac_project_person.id;", new DynamicParameters());
                 return output.ToList();
             }
         }
@@ -46,7 +46,7 @@ namespace MiniprojectSQL
                         ON  dac_project_person.person_id = dac_person.id 
                         LEFT JOIN dac_project
                         ON dac_project_person.project_id = dac_project.id
-                        WHERE dac_person.id = (SELECT id FROM dac_person WHERE person_name = '{person}');", new DynamicParameters());
+                        WHERE dac_person.id = (SELECT id FROM dac_person WHERE person_name = '{person}') ORDER BY dac_project_person.id;", new DynamicParameters());
                 return output.ToList();
             }
         }
@@ -64,7 +64,7 @@ namespace MiniprojectSQL
                             ON dac_project_person.project_id = dac_project.id
                             LEFT JOIN dac_person
                             ON  dac_project_person.person_id = dac_person.id 
-                            WHERE dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}');", new DynamicParameters());
+                            WHERE dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}') ORDER BY dac_project_person.id;", new DynamicParameters());
                 return output.ToList();
             }
         }
@@ -80,7 +80,7 @@ namespace MiniprojectSQL
                         LEFT JOIN dac_project
                         ON  dac_project_person.project_id = dac_project.id
                         LEFT JOIN dac_person
-                        ON dac_project_person.person_id = dac_person.id;", new DynamicParameters());
+                        ON dac_project_person.person_id = dac_person.id ORDER BY dac_project_person.id", new DynamicParameters());
                 return output.ToList();
 
             }
