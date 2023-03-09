@@ -32,18 +32,19 @@ namespace MiniprojectSQL
                 OR pass the array directly as argument like below
                 */
 
-                    int option = NavMenu(new List<string> { "Work Time Tracker" , "Register hours in project", "New project", "New person", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mQuit" },index);
+                    int option = NavMenu(new List<string> { "Work Time Tracker" , "Register hours in project", "New project", "New person", "Edit registered hours", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mQuit" },index);
 
                     //NavMenu will return the index of which option the user has picked
                     if (option == 0) WorkTimeTrack();
                     else if (option == 1) RegTime();
                     else if (option == 2) NewProject();
                     else if (option == 3) NewPerson();
-                    else if (option == 4) EditProject();
-                    else if (option == 5) EditPerson();
-                    else if (option == 6) DeleteProject();
-                    else if (option == 7) DeletePerson();
-                    else if (option == 8) Quit();
+                    else if (option == 4) EditRegTime();
+                    else if (option == 5) EditProject();
+                    else if (option == 6) EditPerson();
+                    else if (option == 7) DeleteProject();
+                    else if (option == 8) DeletePerson();
+                    else if (option == 9) Quit();
                     index = option;
                 }
                 catch (Exception e)
@@ -98,6 +99,69 @@ namespace MiniprojectSQL
                         selectedOption = true;
                         break;
                 }
+            }
+            Console.ResetColor();
+            return option;
+        }
+
+
+        public static int CustomNavMenu(List<ProjectPersonModel> options = null, int option = 0)
+        {
+            Console.CursorVisible = false;
+            ConsoleKeyInfo key;
+            (int left, int top) = Console.GetCursorPosition();
+            var last = options.Last();
+            string cursor = " -> ";
+            bool selectedOption = false;
+            while (!selectedOption)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.SetCursorPosition(left, top);
+                Console.WriteLine("    {0,-3}  {1, -10}  {2,-15}  {3,-5}\n", "(i)", "Person", "Project", "Hours");
+                for (int i = 0; i < options.Count; i++)
+                {
+                    if (options[i] != last)
+                        Console.WriteLine((option == i ? cursor : "    ") + " " + (i + 1) + ".  {0, -10}  {1,-15}   {2,-5}", options[i].person_name, options[i].project_name, options[i].hours);
+                    else Console.WriteLine((option == i ? cursor : "    ") + $" \u001b[0m{options[i].person_name}");
+                }
+                key = Console.ReadKey(true);
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        option = (option == options.Count - 1 ? option = 0 : option + 1);
+                        break;
+                    case ConsoleKey.UpArrow:
+                        option = (option == 0 ? option = options.Count - 1 : option - 1);
+                        break;
+                    case ConsoleKey.Enter:
+                        selectedOption = true;
+                        break;
+                }
+
+
+
+                //int index = options.Count - 1;
+                //foreach (var x in options)
+                //{
+                //    if (x != last)
+                //        Console.WriteLine((option == index ? cursor : "    ") + " " + index + ".        {0, -10}  {1,-15}   {2,-5}", x.person_name, x.project_name, x.hours);
+                //    else Console.WriteLine((option == index ? cursor : "    ") + $" \u001b[0m{x.person_name}");
+                //    index--;
+                //}
+
+                //key = Console.ReadKey(true);
+                //switch (key.Key)
+                //{
+                //    case ConsoleKey.DownArrow:
+                //        option = (option == 1 ? option = options.Count : option - 1);
+                //        break;
+                //    case ConsoleKey.UpArrow:
+                //        option = (option == options.Count + 1 ? option = 1 : option + 1);
+                //        break;
+                //    case ConsoleKey.Enter:
+                //        selectedOption = true;
+                //        break;
+                //}
             }
             Console.ResetColor();
             return option;
@@ -210,7 +274,6 @@ namespace MiniprojectSQL
                 Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
                 return "";
             }
-            
         }
 
         static void PersonOnAProject(string optionName)
@@ -218,7 +281,7 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            string person = GetPerson(optionName, "\n   Choose person");
+            string person = GetPerson(optionName, "Person on a project\n   Choose person");
             if (person != "")
             {
                 while (true)
@@ -229,7 +292,7 @@ namespace MiniprojectSQL
                         Console.Clear();
                         TitleScreen();
                         OptionTitleInRed(optionName);
-                        InstructionInYellow($"\n   Table of {person} and hours registered on the {project} project");
+                        InstructionInYellow($"\n   Table of {person} and hours registered on the {project} project\n   NOTE: Table order is from first (above) to last (below) registry");
                         List<ProjectPersonModel> personProjectList = DatabaseAccess.GetPersonOnOneProject(person, project);
                         var x = personProjectList;
                         Console.ForegroundColor = ConsoleColor.White;
@@ -261,13 +324,13 @@ namespace MiniprojectSQL
             OptionTitleInRed(optionName);
             while (true)
             {
-                string person = GetPerson(optionName, "\n   Choose person");
+                string person = GetPerson(optionName, "Person on multiple projects\n   Choose person");
                 if (person != "")
                 {
                     Console.Clear();
                     TitleScreen();
                     OptionTitleInRed(optionName);
-                    InstructionInYellow($"\n   Table of {person} and hours registered on different projects");
+                    InstructionInYellow($"\n   Table of {person} and hours registered on different projects\n   NOTE: Table order is from first (above) to last (below) registry");
                     List<ProjectPersonModel> personMultiProjectList = DatabaseAccess.GetPersonWithManyProjects(person);
                     var x = personMultiProjectList;
                     Console.ForegroundColor = ConsoleColor.White;
@@ -300,13 +363,13 @@ namespace MiniprojectSQL
             int index = 0;
             while (true)
             {
-                string project = GetProject(optionName, "Choose project", index);
+                string project = GetProject(optionName, "Project with multiple person\n   Choose project", index);
                 if (project != "")
                 {
                     Console.Clear();
                     TitleScreen();
                     OptionTitleInRed(optionName);
-                    InstructionInYellow($"\n   Table of the {project} project\n   and everyone that has registered hours on it");
+                    InstructionInYellow($"\n   Table of the {project} project\n   and everyone that has registered hours on it\n   NOTE: Table order is from first (above) to last (below) registry");
                     Console.ForegroundColor = ConsoleColor.White;
                     List<ProjectPersonModel> projectMultiPersonList = DatabaseAccess.GetProjectWithMany(project);
                     var x = projectMultiPersonList;
@@ -338,7 +401,7 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("\n   Table of all projects, persons and registered hours\n   Total amount of registered hours at the bottom");
+            InstructionInYellow("\n   Table of all projects, persons and registered hours\n   Total amount of registered hours at the bottom\\n   NOTE: Table order is from first (above) to last (below) registry");
             List<ProjectPersonModel> workTrackList = DatabaseAccess.GetProjectPersonList();
             Console.ForegroundColor = ConsoleColor.White;
             while (true)
@@ -504,6 +567,150 @@ namespace MiniprojectSQL
             }
 
             PleasePressEnter();
+        }
+
+        /*
+        static void EditRegTimeOnPerson(List<ProjectPersonModel> list, string optionName, string person)
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            InstructionInYellow("\n   Please enter the index of the registry you wish to change");
+            int index = list.Count;
+            var first = list.First();
+            list.Reverse();
+            Console.WriteLine("\n    ____________________________________________________");
+            Console.WriteLine("   |  {0,-5}  |  {1, -10}  |  {2,-15}  | {3,5} |", "Index", "Person", "Project", "Hours");
+            Console.WriteLine("   |---------|--------------|-------------------|-------|");
+            foreach (ProjectPersonModel x in list) 
+            {
+                
+                if (x != first)
+                {
+                    Console.WriteLine("   |  {0,-5}  |  {1, -10}  |  {2,-15}  | {3,-5} |", "", x.person_name, x.project_name, x.hours);
+                    Console.WriteLine("   |---------|--------------|-------------------|-------|");
+                }
+                else
+                {
+                    
+                    Console.WriteLine("   |_________|______________|___________________|_______|");
+                    Console.WriteLine(  );
+                    Console.WriteLine(x.person_name);
+                }
+                index--;
+            }
+            while (true)
+            {
+                InstructionInYellow("Please enter index below\n   Leave blank to cancel");
+                Console.Write("   ==> ");
+                Console.CursorVisible = true;
+                string indexChoice = Console.ReadLine();
+                if (indexChoice != "")
+                {
+                    Console.WriteLine($"\n   You have entered index: {indexChoice}");
+                }
+                else
+                {
+                    Console.WriteLine("   Canceling");
+                    break;
+                }
+                InstructionInYellow("Please input new hours\n   Leave blank to cancel");
+                Console.Write("   ==> ");
+                string newHours = Console.ReadLine();
+                if (newHours != "")
+                {
+                    Console.WriteLine($"\n   You have entered: {newHours} hours");
+                }
+                else
+                {
+                    Console.WriteLine("   Canceling");
+                    break;
+                }
+                string yesNo = IsCorrect(optionName, $"   Change hours at index {indexChoice} to {newHours}");
+                if (yesNo == "yes")
+                {
+
+                }
+                else
+                {
+                    Console.WriteLine("   Canceling");
+                    break;
+                }
+            }
+        } */
+
+
+        static void EditRegTimeOnPerson(List<ProjectPersonModel> list, string optionName, string person)
+        {
+            while (true)
+            {
+                Console.Clear();
+                TitleScreen();
+                OptionTitleInRed(optionName);
+                InstructionInYellow("\n   Please choose the registry that you wish to alter\n   NOTE: Index (i) indicates order from oldest to latest");
+                int option = CustomNavMenu(list);
+                if (option == list.Count - 1)
+                {
+                    Console.WriteLine($"\n   You choosed: {list[option].person_name}");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine($"\n   You choosed: \u001b[1m{option + 1}. {list[option].person_name}   {list[option].project_name}  {list[option].hours}\u001b[0m hours");
+                }
+
+                InstructionInYellow("Please enter new amount of hours\n   Leave blank to cancel");
+                Console.CursorVisible = true;
+                Console.Write(" ==> ");
+                string hours = Console.ReadLine();
+                Console.CursorVisible = false;
+                if (hours == "")
+                {
+                    Console.WriteLine("\n   Canceling");
+                    break;
+                }
+                int newHours = Convert.ToInt32(hours);
+                string yesNo = IsCorrect(optionName, $"\n   Alter hours on index \u001b[1m{option + 1}\u001b[0m from \u001b[1m{list[option].hours}\u001b[0m to \u001b[1m{newHours}\u001b[0m\n");
+                if (yesNo == "yes")
+                {
+                    bool success = DatabaseAccess.EditRegisteredHours(list[option].id, newHours);
+                    if (success == true)
+                    {
+                        SuccessInGreen("Greate success!");
+                        break;
+                    }
+                    else 
+                    { 
+                        ErrorInRed("Unable to alter hours"); 
+                        break;
+                    }
+                }
+            }
+
+            
+
+        }
+
+
+
+        static void EditRegTime(string optionName = "Edit registered hours")
+        {
+            while (true)
+            {
+                Console.Clear();
+                TitleScreen();
+                OptionTitleInRed(optionName);
+                string person = GetPerson(optionName, "Choose person");
+                if (person == "") { PleasePressEnter(); break; }
+                List<ProjectPersonModel> PersonOnAProjectList = DatabaseAccess.GetPersonWithManyProjects(person);
+                PersonOnAProjectList.Add(new ProjectPersonModel { person_name = "Back to menu" });
+                //PersonOnAProjectList.Insert(0, new ProjectPersonModel { person_name = "Back to menu" });
+
+                EditRegTimeOnPerson(PersonOnAProjectList, optionName, person);
+
+                PleasePressEnter();
+                break;
+            }
         }
         static void EditProject(string optionName = "Edit project")
         {
