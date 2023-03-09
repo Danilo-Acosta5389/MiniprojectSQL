@@ -39,7 +39,7 @@ namespace MiniprojectSQL
                     else if (option == 1) RegTime();
                     else if (option == 2) NewProject();
                     else if (option == 3) NewPerson();
-                    else if (option == 4) EditRegHours();
+                    else if (option == 4) EditRegTime();
                     else if (option == 5) EditProject();
                     else if (option == 6) EditPerson();
                     else if (option == 7) DeleteProject();
@@ -105,7 +105,7 @@ namespace MiniprojectSQL
         }
 
 
-        public static int CustomNavMenu(List<ProjectPersonModel> options = null, List<PersonModel> person = null, List<ProjectModel> project = null, int option = 0)
+        public static int CustomNavMenu(List<ProjectPersonModel> options = null, int option = 0)
         {
             Console.CursorVisible = false;
             ConsoleKeyInfo key;
@@ -118,7 +118,7 @@ namespace MiniprojectSQL
                 Console.SetCursorPosition(left, top);
                 for (int i = 0; i < options.Count; i++)
                 {
-                    Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i].project_name} {options[i].person_name} {options[i].hours}");
+                    Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i].person_name} {options[i].project_name} {options[i].hours}");
                 }
                 key = Console.ReadKey(true);
                 switch (key.Key)
@@ -245,7 +245,6 @@ namespace MiniprojectSQL
                 Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
                 return "";
             }
-            
         }
 
         static void PersonOnAProject(string optionName)
@@ -541,16 +540,80 @@ namespace MiniprojectSQL
             PleasePressEnter();
         }
 
-        static void EditRegHours(string optionName = "Edit registered hours")
+
+        static void EditRegTimeOnPerson(List<ProjectPersonModel> list, string optionName, string person)
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            List<ProjectPersonModel> allHoursList = DatabaseAccess.GetProjectPersonList();
+            InstructionInYellow("\n   Please enter the index of the registry you wish to change");
+            int index = list.Count;
+            var first = list.First();
+            list.Reverse();
+            Console.WriteLine("\n    ____________________________________________________");
+            Console.WriteLine("   |  {0,-5}  |  {1, -10}  |  {2,-15}  | {3,5} |", "Index", "Person", "Project", "Hours");
+            Console.WriteLine("   |---------|--------------|-------------------|-------|");
+            foreach (ProjectPersonModel x in list) 
+            {
+                Console.WriteLine("   |  {0,-5}  |  {1, -10}  |  {2,-15}  | {3,-5} |", index, x.person_name, x.project_name, x.hours);
+                if (x != first) Console.WriteLine("   |---------|--------------|-------------------|-------|");
+                else Console.WriteLine("   |_________|______________|___________________|_______|");
+                index--;
+            }
+            while (true)
+            {
+                InstructionInYellow("Please enter index below\n   Leave blank to cancel");
+                Console.Write("   ==> ");
+                Console.CursorVisible = true;
+                string indexChoice = Console.ReadLine();
+                if (indexChoice != "")
+                {
+                    Console.WriteLine($"\n   You have entered index: {indexChoice}");
+                }
+                else
+                {
+                    Console.WriteLine("   Canceling");
+                    break;
+                }
+                InstructionInYellow("Please input new hours\n   Leave blank to cancel");
+                Console.Write("   ==> ");
+                string newHours = Console.ReadLine();
+                if (newHours != "")
+                {
+                    Console.WriteLine($"\n   You have entered: {newHours} hours");
+                }
+                else
+                {
+                    Console.WriteLine("   Canceling");
+                    break;
+                }
+                string yesNo = IsCorrect(optionName, $"   Change hours at index {indexChoice} to {newHours}");
+                if (yesNo == "yes")
+                {
+
+                }
+                else
+                {
+                    Console.WriteLine("   Canceling");
+                    break;
+                }
+            }
+        }
+
+
+
+        static void EditRegTime(string optionName = "Edit registered hours")
+        {
+            Console.Clear();
+            TitleScreen();
+            OptionTitleInRed(optionName);
+            string person = GetPerson(optionName, "Choose person");
+            List<ProjectPersonModel> PersonOnAProjectList = DatabaseAccess.GetPersonWithManyProjects(person);
             bool isRunning = true;
             while (isRunning)
             {
-                int option = CustomNavMenu(allHoursList);
+                EditRegTimeOnPerson(PersonOnAProjectList, optionName, person);
+
                 PleasePressEnter();
                 break;
             }

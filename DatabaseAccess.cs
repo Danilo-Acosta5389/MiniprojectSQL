@@ -121,13 +121,13 @@ namespace MiniprojectSQL
         }
 
 
-        public static bool EditRegisteredHours(int id)
+        public static bool EditRegisteredHours(int id, int hours)
         {
             try
             {
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
-                    cnn.Execute($"UPDATE dac_project_person SET hours = 10 WHERE id = {id};");
+                    cnn.Execute($"UPDATE dac_project_person SET hours = {hours} WHERE id = {id};");
                 }
             }
             catch (Exception e)
