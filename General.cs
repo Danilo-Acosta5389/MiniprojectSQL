@@ -401,7 +401,7 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("\n   Table of all projects, persons and registered hours\n   Total amount of registered hours at the bottom\\n   NOTE: Table order is from first (above) to last (below) registry");
+            InstructionInYellow("\n   Table of all projects, persons and registered hours\n   Total amount of registered hours at the bottom\n   NOTE: Table order is from first (above) to last (below) registry");
             List<ProjectPersonModel> workTrackList = DatabaseAccess.GetProjectPersonList();
             Console.ForegroundColor = ConsoleColor.White;
             while (true)
