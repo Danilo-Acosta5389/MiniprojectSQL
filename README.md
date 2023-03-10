@@ -5,7 +5,7 @@
 </div>
 </br>
 
-### About
+## About
 This is the WorkTimeTracker app,
 it's an app to track hours spent on a project. You can add a project, add your name and later register hours spent on a project. You may edit project and person names, you can also change amount of hours entered at some point.
 Deletion is possible but is limited (for now). If one has registered hours on a person or a project it is not possible to delete that person or project (yet).
