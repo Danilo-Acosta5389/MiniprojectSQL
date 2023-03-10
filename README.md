@@ -93,7 +93,7 @@ ALTER TABLE "public"."dac_project_person" ADD CONSTRAINT "FK_dac_person_project_
 
 ## Demo of the app
 
-</br></br>
+</br>
 <div align="center">
   <img src="https://user-images.githubusercontent.com/113366808/224427749-824d3ff1-7f03-4096-bde9-9fd7e18ebeb1.gif" width="900" alt="Gif showing the app">
 </div>
