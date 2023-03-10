@@ -1,7 +1,7 @@
 # MiniprojectSQL
 <p align="center">Or as i call it</p>
 <div align="center">
-  <img src="https://user-images.githubusercontent.com/113366808/224378996-3bd342cc-9bef-4375-812e-91032252aecb.gif" width="500"   alt="WorkTimeTracker-logo"/>
+  <img src="https://user-images.githubusercontent.com/113366808/224378996-3bd342cc-9bef-4375-812e-91032252aecb.gif" width="800"   alt="WorkTimeTracker-logo"/>
 </div>
 </br>
 
