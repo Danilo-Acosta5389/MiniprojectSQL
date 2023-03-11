@@ -14,7 +14,22 @@ namespace MiniprojectSQL
     {
         public static void App()
         {
-            int index = 0;  //THIS VARIABLE IS HERE SO THAT THE MENU ALWAYS STAYS IN THE POSITION WHERE WE LAST LEFT IT
+            /*
+             * 
+             * This is the start of the app
+             * There are many functions and methods along this path
+             * Among these methods, it is important to keep in mind
+             * That the user is never truly aware of any unique identifiers 
+             * such as id's that are being passed into methods whom handle the communication
+             * with SQL database.
+             * 
+             * The only thing the user is aware of are the names, hours and at some point perhaps a listing with indexes starting from 1(, 2, 3, 4 ...etc)
+             * 
+             * That is all. Enjoy.
+             * 
+             */
+
+            int index = 0;  //THIS VARIABLE IS HERE SO THAT THE MENU ALWAYS STAYS IN THE POSITION WHERE WE LAST LEFT IT, IT HAS BEEN PASSED INTO NavMenu()
             bool appRunning = true;
             while (appRunning)
             {
@@ -26,13 +41,14 @@ namespace MiniprojectSQL
                 {
                     /*
                     
+                    
                     The NavMenu() method is a reusable menu, just pass in a list like below
                     List<string> option = new List<string> { "Register hours", "New project", "New person", "Edit project", "Edit person" , "Close" };
                     NavMenu(options);
                     OR pass the List directly as an argument like below
                     
                      */
-
+                        //BELOW HERE IS THE MAIN MENU                                                                                                                                                                        //NOTE THE ESCAPE CODE IN THE STRING BELOW, IT MAKES THE STRING RED                         //NOTE THE INDEX BEING PASSED IN HERE, SO THAT THE MENU STAYS IN PLACE
                     int option = NavMenu(new List<string> { "Work Time Tracker" , "Register hours in project", "New project", "New person", "Edit registered hours", "Edit project", "Edit person", "\x1b[31mDelete project\u001b[0m", "\u001b[31mDelete person\u001b[0m", "\u001b[1mClose" },index);
 
                     //NavMenu will returns the index of which option the user has picked
@@ -52,8 +68,8 @@ namespace MiniprojectSQL
                 }
                 catch (Exception e)
                 {
-                    ErrorInRed(e.Message);
-                    PleasePressEnter();
+                    ErrorInRed(e.Message); //ALL ERROR OR WARNINGS WILL BE IN RED THANKS TO THIS REUSABLE METHOD
+                    PleasePressEnter(); // THE PleasePressEnter WILL INDICATE WHEN IT IS TIME TO CONTINUE
                 }
 
             }
@@ -117,8 +133,83 @@ namespace MiniprojectSQL
             return option; //AN INT IS RETURNED
         }
 
+        public static int CustomProjectModelNavMenu(List<ProjectModel> options, int option = 0) //THIS MENU IS MAYBE ONLY USED ONECE, HENCE THE VERY SPECIFIC NAME. THE STRUCTURE IS A BIT DIFFERENT INSIDE AND IT TAKS IN A SPECIFIC OBJECT
+        {
+            Console.CursorVisible = false; //THIS TURNS OF THE CURSOR VISIBILITY
+            ConsoleKeyInfo key;  //ConsoleKeyInfo variable will read the key pressed by the user
+            (int left, int top) = Console.GetCursorPosition(); //THIS WILL SET A CURSOR POSITION SO THE MENU REWRITES ON THE SAME POSITIOIN EVERYTIME YOU GO UPP OR DOWN
+            var last = options.Last();
+            string cursor = " -> ";
+            bool selectedOption = false;
+            while (!selectedOption)
+            {
+                Console.ForegroundColor = ConsoleColor.White;  //FOREGROUND COLOR IS SET QUITE OFTEN TO EMPHESIZE TEXT
+                Console.SetCursorPosition(left, top); //EVERY TIME THE USER PRESSES UP OR DOWN THIS WHILE LOOP WILL RUN AGAIN AND THIS METHOD HERE WILL REWRITE THE MENU ON TOP OF THE OLD ONE
+                for (int i = 0; i < options.Count; i++)
+                {
+                    if (options[i] != last)
+                        Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i].project_name}");  //THIS IS WHERE THE MENU GETS OUTPUTTED
+                    else 
+                        Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i].extra}");
+                }
+                key = Console.ReadKey(true); //THE ConsoleKeyInfo VARIABLE THAT WAS DECLARED EARLIER IS SET TO Console.ReadKey(true) HERE
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        option = (option == options.Count - 1 ? option = 0 : option + 1);  //THE SWITCH CASE TAKES IN the ConsoleKeyInfo variable 'key'
+                        break;
+                    case ConsoleKey.UpArrow:
+                        option = (option == 0 ? option = options.Count - 1 : option - 1);
+                        break;
+                    case ConsoleKey.Enter:
+                        selectedOption = true;
+                        break;
+                }
+            }
+            Console.ResetColor(); //THIS METHOD RESETS THE COLOR ON THE TEXT
+            return option; //AN INT IS RETURNED
+        }
 
-        public static int CustomNavMenu(List<ProjectPersonModel> options = null, int option = 0) //THIS IS THE LATER MENU WHERE I REALIZED IT MIGHT ASWELL TAKE IN A WHOLE OBJECT LIST OR ARRAY
+        public static int CustomPersonModelNavMenu(List<PersonModel> options, int option = 0) //LIKE THE ABOVE MENU THIS MENU IS ALSO ONLY USED FOR SPECIFIC PURPOSE, STRUCTURE IS A BIT DIFFERENT INSIDE AND IT TAKS IN A SPECIFIC OBJECT
+        {
+            Console.CursorVisible = false; //THIS TURNS OF THE CURSOR VISIBILITY
+            ConsoleKeyInfo key;  //ConsoleKeyInfo variable will read the key pressed by the user
+            (int left, int top) = Console.GetCursorPosition(); //THIS WILL SET A CURSOR POSITION SO THE MENU REWRITES ON THE SAME POSITIOIN EVERYTIME YOU GO UPP OR DOWN
+            var last = options.Last();
+            string cursor = " -> ";
+            bool selectedOption = false;
+            while (!selectedOption)
+            {
+                Console.ForegroundColor = ConsoleColor.White;  //FOREGROUND COLOR IS SET QUITE OFTEN TO EMPHESIZE TEXT
+                Console.SetCursorPosition(left, top); //EVERY TIME THE USER PRESSES UP OR DOWN THIS WHILE LOOP WILL RUN AGAIN AND THIS METHOD HERE WILL REWRITE THE MENU ON TOP OF THE OLD ONE
+                for (int i = 0; i < options.Count; i++)
+                {
+                    if ( options[i] != last) 
+                        Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i].person_name}");  //THIS IS WHERE THE MENU GETS OUTPUTTED
+                    else 
+                        Console.WriteLine($"{(option == i ? cursor : "    ")}{options[i].extra}");
+                }
+                key = Console.ReadKey(true); //THE ConsoleKeyInfo VARIABLE THAT WAS DECLARED EARLIER IS SET TO Console.ReadKey(true) HERE
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        option = (option == options.Count - 1 ? option = 0 : option + 1);  //THE SWITCH CASE TAKES IN the ConsoleKeyInfo variable 'key'
+                        break;
+                    case ConsoleKey.UpArrow:
+                        option = (option == 0 ? option = options.Count - 1 : option - 1);
+                        break;
+                    case ConsoleKey.Enter:
+                        selectedOption = true;
+                        break;
+                }
+            }
+            Console.ResetColor(); //THIS METHOD RESETS THE COLOR ON THE TEXT
+            return option; //AN INT IS RETURNED
+        }
+
+
+
+        public static int ProjectPersonModelNavMenu(List<ProjectPersonModel> options = null, int option = 0) //THIS IS ALSO A VERY SPECIFIC MENU THE STRUCTURE INSIDE IS A BIT DIFFERENT, IT ALSO TAKES A SPECIFIC OBJECT LIKE THE ABOVE ONES 
         {                                                      //THIS MENU WAS VERY MUCH NEEDED FOR THE FUNCTION OF editing registered hours.
             Console.CursorVisible = false;
             ConsoleKeyInfo key;
@@ -135,7 +226,8 @@ namespace MiniprojectSQL
                 {
                     if (options[i] != last)
                         Console.WriteLine((option == i ? cursor : "    ") + " " + (i + 1) + ".  {0, -10}  {1,-15}   {2,-5}", options[i].person_name, options[i].project_name, options[i].hours);
-                    else Console.WriteLine((option == i ? cursor : "    ") + $" \u001b[0m{options[i].person_name}");
+                    else 
+                        Console.WriteLine((option == i ? cursor : "    ") + $" \u001b[0m{options[i].extra}");
                 }
                 key = Console.ReadKey(true);
                 switch (key.Key)
@@ -169,28 +261,7 @@ namespace MiniprojectSQL
             Console.WriteLine();
         }
 
-        //ARE YOU SURE, SOMETHING I FREQUENTLY USE
-        public static int AreYouSure(string optionName, string message, int index = 0)
-        {
-            Console.Clear();
-            TitleScreen();
-            OptionTitleInRed(optionName);
-            InstructionInYellow("Are you sure?");
-            Console.WriteLine(message);
-            int option = NavMenu(new List<string> { "Yes", "No" }, index);
-            return option;
-        }
         
-        //JUST A TEXT ASKING THE USER TO PRESS ENTER, NO OTHER KEY CAN BE PRESSED.
-        public static void PleasePressEnter()
-        {
-            Console.CursorVisible = false;
-
-            InstructionInYellow("Please press ENTER to continue");
-
-            while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
-            Console.ResetColor ();
-        }
 
         //THE METHOD BELOW IS USED ALOT, IT IS ASOCIATED WITH INSTRUCTIONS TO THE USER
         public static void InstructionInYellow(string input)
@@ -218,18 +289,34 @@ namespace MiniprojectSQL
             Console.ResetColor();
         }
 
-        //QUITE LIKE THE ARE YOU SURE
-        public static string IsCorrect(string optionName , string message = "[Insert message]", int index = 0)
+
+        //ARE YOU SURE, SOMETHING I FREQUENTLY USE.
+        public static string YesNo(string optionName, string question, string message, int index = 0)
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            InstructionInYellow("Is this correct?");
+            InstructionInYellow(question);
             Console.WriteLine(message);
             int yesOrNo = NavMenu(new List<string> { "Yes", "No" }, index);
             if (yesOrNo == 0) return "yes";
             else return "no";
         }
+
+
+        //JUST A TEXT ASKING THE USER TO PRESS ENTER, NO OTHER KEY CAN BE PRESSED.
+        public static void PleasePressEnter()
+        {
+            Console.CursorVisible = false;
+
+            InstructionInYellow("Please press ENTER to continue");
+
+            while (Console.ReadKey(true).Key != ConsoleKey.Enter) { }
+            Console.ResetColor();
+        }
+
+
+        
 
         /*
           
@@ -241,49 +328,49 @@ namespace MiniprojectSQL
         //IT CALLS THE SQL METHOD AND STORES ALL THE DATA IN A List<string> VARIABLE
         //IT ALSO CALLS THE NavMenu() METHOD WITH THE LIST AS ARGUMENT
 
-        public static string GetPerson(string optionName, string message = "Choose person")
+        public static (int , string) GetPerson(string optionName, string message = "Choose person")
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
             InstructionInYellow(message);
 
-            List<string> personList = DatabaseAccess.GetPersonName();
-            personList.Add("\u001b[0mBack to menu");    //NOTE HERE THAT Back to menu IS ADDED TO THE LIST OF PERSONS, THIS IS SO THAT THE USER CAN CHOOSE AN OPTION THAT WILL TAKE HIM/HER BACK
+            List<PersonModel> personList = DatabaseAccess.GetPersonTable();
+            personList.Add( new PersonModel { extra = "\u001b[0mBack to menu" } );    //NOTE HERE THAT Back to menu IS ADDED TO THE LIST OF PERSONS, THIS IS SO THAT THE USER CAN CHOOSE AN OPTION THAT WILL TAKE HIM/HER BACK
 
-            int personIndex = NavMenu(personList);
+            int personIndex = CustomPersonModelNavMenu(personList);
             if (personIndex != personList.Count - 1)
             {
-                return personList[personIndex];
+                return (personList[personIndex].id, personList[personIndex].person_name);
             }
             else
             {
-                Console.WriteLine($"\n   You choosed: \x1b[1m{personList[personIndex]}\x1b[0m\n");  //THE NavMenu() METHOD RETURNS THE INDEX OF THE NAME IN THE LIST
-                return "";                                                          //THE INDEX IS LATER PASSED INTO THE LIST AND THATS HOW WE DISPLAY THE CORRECT NAME ALWAYS
+                Console.WriteLine($"\n   You choosed: \x1b[1m{personList[personIndex].extra}\x1b[0m\n");  //THE NavMenu() METHOD RETURNS THE INDEX OF THE NAME IN THE LIST
+                return (0, "");                                                          //THE INDEX IS LATER PASSED INTO THE LIST AND THATS HOW WE DISPLAY THE CORRECT NAME ALWAYS
             }                                                                       //IT WOULD HAVE BEEN BETTER TO USE id INSTEAD OF ONLY THE NAME BUT I MIGHT DO THIS CHANGE LATER ON
         }                                                                   //IF THE LAST OPTION ON THE LIST IS CHOOSEN, IT WILL RETURN "", WHICH WILL MEAN GO BACK IN THE METHOD THAT CALLS THIS ONE
 
         //THE FOLLOWING METHOD DOES THE EXACT SAME THING AS THE ABOVE ONE EXCEPT IT GETS DATA FROM THE project_name TABLE IN THE DATABASE 
 
-        public static string GetProject(string optionName, string message = "Choose project", int index = 0)
+        public static (int, string) GetProject(string optionName, string message = "Choose project", int index = 0)
         {
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
             InstructionInYellow(message);
 
-            List<string> projectList = DatabaseAccess.GetProjectName(); // LIKE THE ABOVE METHOD, Back to menu IS ADDED HERE AT THE END OF THE LIST SO THAT USERS CAN GO BACK
-            projectList.Add("\u001b[0mBack to menu");  // NOTE TO SELF, INSTEAD OF ADDING THIS, ONE COULD MAKE Esc button for going back ? Maybe...
+            List<ProjectModel> projectList = DatabaseAccess.GetProjectTable(); // LIKE THE ABOVE METHOD, Back to menu IS ADDED HERE AT THE END OF THE LIST SO THAT USERS CAN GO BACK
+            projectList.Add(new ProjectModel { extra = "\u001b[0mBack to menu" });  // NOTE TO SELF, INSTEAD OF ADDING THIS, ONE COULD MAKE Esc button for going back ? Maybe...
 
-            int projectIndex = NavMenu(projectList, index);
+            int projectIndex = CustomProjectModelNavMenu(projectList, index);
             if (projectIndex != projectList.Count - 1)
             {
-                return projectList[projectIndex];
+                return (projectList[projectIndex].id, projectList[projectIndex].project_name);
             }
             else
             {
-                Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex]}\x1b[0m\n");
-                return "";
+                Console.WriteLine($"\n   You choosed: \x1b[1m{projectList[projectIndex].extra}\x1b[0m\n");
+                return (0, "");
             }
         }
 
@@ -309,19 +396,19 @@ namespace MiniprojectSQL
             Console.Clear();
             TitleScreen();
             OptionTitleInRed(optionName);
-            string person = GetPerson(optionName, "Person on a project\n   Choose person");
-            if (person != "")
+            (int, string) person = GetPerson(optionName, "Person on a project\n   Choose person");
+            if (person.Item1 != 0)
             {
                 while (true)
                 {
-                    string project = GetProject(optionName, "\n   Choose project");
-                    if (project != "")
+                    (int, string) project = GetProject(optionName, "\n   Choose project");
+                    if (project.Item1 != 0)
                     {
                         Console.Clear();
                         TitleScreen();
                         OptionTitleInRed(optionName);
-                        InstructionInYellow($"\n   Table of {person} and hours registered on the {project} project\n   NOTE: Table order is from first (above) to last (below) registry");
-                        List<ProjectPersonModel> personProjectList = DatabaseAccess.GetPersonOnOneProject(person, project);
+                        InstructionInYellow($"\n   Table of {person.Item2} and hours registered on the {project.Item2} project\n   NOTE: Table order is from first (above) to last (below) registry");
+                        List<ProjectPersonModel> personProjectList = DatabaseAccess.GetPersonOnOneProject(person.Item1, project.Item1);
                         var x = personProjectList;
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine("    __________________________________________");
@@ -355,14 +442,14 @@ namespace MiniprojectSQL
             OptionTitleInRed(optionName);
             while (true)
             {
-                string person = GetPerson(optionName, "Person on multiple projects\n   Choose person");
-                if (person != "")
+                (int, string) person = GetPerson(optionName, "Person on multiple projects\n   Choose person");
+                if (person.Item1 != 0)
                 {
                     Console.Clear();
                     TitleScreen();
                     OptionTitleInRed(optionName);
-                    InstructionInYellow($"\n   Table of {person} and hours registered on different projects\n   NOTE: Table order is from first (above) to last (below) registry");
-                    List<ProjectPersonModel> personMultiProjectList = DatabaseAccess.GetPersonWithManyProjects(person);
+                    InstructionInYellow($"\n   Table of {person.Item2} and hours registered on different projects\n   NOTE: Table order is from first (above) to last (below) registry");
+                    List<ProjectPersonModel> personMultiProjectList = DatabaseAccess.GetPersonWithManyProjects(person.Item1);
                     var x = personMultiProjectList;
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine("    __________________________________________");
@@ -396,15 +483,15 @@ namespace MiniprojectSQL
             int index = 0;
             while (true)
             {
-                string project = GetProject(optionName, "Project with multiple person\n   Choose project", index);
-                if (project != "")
+                (int, string) project = GetProject(optionName, "Project with multiple person\n   Choose project", index);
+                if (project.Item1 != 0)
                 {
                     Console.Clear();
                     TitleScreen();
                     OptionTitleInRed(optionName);
-                    InstructionInYellow($"\n   Table of the {project} project\n   and everyone that has registered hours on it\n   NOTE: Table order is from first (above) to last (below) registry");
+                    InstructionInYellow($"\n   Table of the {project.Item2} project\n   and everyone that has registered hours on it\n   NOTE: Table order is from first (above) to last (below) registry");
                     Console.ForegroundColor = ConsoleColor.White;
-                    List<ProjectPersonModel> projectMultiPersonList = DatabaseAccess.GetProjectWithMany(project);
+                    List<ProjectPersonModel> projectMultiPersonList = DatabaseAccess.GetProjectWithMany(project.Item1);
                     var x = projectMultiPersonList;
                     Console.WriteLine("    __________________________________________");
                     Console.WriteLine("   | {0,-15}  | {1, -10}  |  {2,-5}  |", "Project", "Person", "Hours");
@@ -498,11 +585,10 @@ namespace MiniprojectSQL
             bool isRunning = true;
             while (isRunning)
             {
-                string person = GetPerson(optionName);  //CALLS THE METHOD THAT GETS ALL USERS
-                if (person == "") { break; }
-
-                string project = GetProject(optionName); //CALLS THE METHOD THAT GETS ALL PROJECTS
-                if (project == "") { break; }
+                (int, string) person = GetPerson(optionName);  //CALLS THE METHOD THAT GETS ALL USERS
+                if (person.Item1 == 0) { break; }
+                (int, string) project = GetProject(optionName); //CALLS THE METHOD THAT GETS ALL PROJECTS
+                if (project.Item1 == 0) { break; }
 
                 InstructionInYellow("Input hours spent on project today\n   Leave blank to cancel");
 
@@ -517,17 +603,14 @@ namespace MiniprojectSQL
                 int newHours = Convert.ToInt32(hours);    //IF THE USER INSERTED A VALUE AND THE FORMAT WAS CORRECT THIS METHOD WILL CONVERT THE string TO AN int
                 Console.CursorVisible = false;
 
-
-                //Console.WriteLine($"\n   \u001b[1m{person}\u001b[0m spent \u001b[1m{hours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
-                string message = $"\n   \u001b[1m{person}\u001b[0m spent \u001b[1m{newHours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today\n";
-                string yesNo = IsCorrect(optionName ,message);
+                string yesNo = YesNo(optionName , "Are you sure?", $"\n   \u001b[1m{person.Item2}\u001b[0m spent \u001b[1m{newHours}\u001b[0m hours on \u001b[1m{project.Item2}\u001b[0m today\n");
                 if (yesNo == "yes")                                                 //USER GETS TO MAKE SURE HE/SHE TYPED CORRECTLY
                 {
-                    bool success = DatabaseAccess.RegistrateHoursInDB(project, person, newHours);
+                    bool success = DatabaseAccess.RegistrateHoursInDB(project.Item1, person.Item1, newHours);
                     if (success)
                     {
                         SuccessInGreen("Great success!");
-                        Console.WriteLine($"\n   \u001b[1mRegistered\u001b[0m: \u001b[1m{person}\u001b[0m spent \u001b[1m{newHours}\u001b[0m hours on \u001b[1m{project}\u001b[0m today");
+                        Console.WriteLine($"\n   \u001b[1mRegistered\u001b[0m: \u001b[1m{person.Item2}\u001b[0m spent \u001b[1m{newHours}\u001b[0m hours on \u001b[1m{project.Item2}\u001b[0m today");
 
                     }
                     else                                        //IF THE OPERATION WHENT WELL, A TEXT WILL BE DISPLAYED IN GREEN OR ELSE IT WILL BE DISPLAYED IN RED
@@ -636,7 +719,7 @@ namespace MiniprojectSQL
         //THE FOLLOWING TWO METHODS MIGHT BE A BIT TRICKY TO UNDESTAND
         //ONE IS THE OPTION IN THE MAIN MENU, THE OTHER ONE IS THE FUNCTIONALITY INSIDE OF IT
 
-        //THE BELOW METHOD IS WHAT MAKES IT POSSIBLE TO ADIT REGISTERED HOURS, THE METHOD MAKES CALL TO THE METHOD IN DatabaseAccess.cs THAT ALTERS A ROW IN dac_project_person,
+        //THE BELOW METHOD IS WHAT MAKES IT POSSIBLE TO EDIT REGISTERED HOURS, THE METHOD MAKES CALL TO THE METHOD IN DatabaseAccess.cs THAT ALTERS A ROW IN dac_project_person,
         //DEPENDING ON THE id THAT GETS PASSED IN
         static void EditRegTimeOnPerson(List<ProjectPersonModel> list, string optionName, string person) //A LIST OF THE ProjectPersonModel OBJECT GETS PASSED IN
         {                                                                                   //THE string person WILL BE AN OPTION MADE IN THE SCREEN BEFORE THIS ONE
@@ -646,10 +729,10 @@ namespace MiniprojectSQL
                 TitleScreen();
                 OptionTitleInRed(optionName);
                 InstructionInYellow("\n   Please choose the registry that you wish to alter\n   NOTE: Index (i) indicates order from oldest to latest");
-                int option = CustomNavMenu(list);  //THE CUSTOM MENY CustomNavMenu THAT TAKES IN AN OBJECT LIST AS ARGUMENT GETS CALLED HERE
+                int option = ProjectPersonModelNavMenu(list);  //THE CUSTOM MENY CustomNavMenu THAT TAKES IN AN OBJECT LIST AS ARGUMENT GETS CALLED HERE
                 if (option == list.Count - 1)
                 {
-                    Console.WriteLine($"\n   You choosed: {list[option].person_name}"); //THE LAST OPTIOIN ON THAT LIST WAS THE TEXT Back to menu, IF THE USER CHOOSES THAT, THE LOOP BREAKS
+                    Console.WriteLine($"\n   You choosed: {list[option].extra}"); //THE LAST OPTIOIN ON THAT LIST WAS THE TEXT Back to menu, IF THE USER CHOOSES THAT, THE LOOP BREAKS
                     break;
                 }
                 else
@@ -668,7 +751,7 @@ namespace MiniprojectSQL
                     break;
                 }
                 int newHours = Convert.ToInt32(hours);
-                string yesNo = IsCorrect(optionName, $"\n   Alter hours on index \u001b[1m{option + 1}\u001b[0m from \u001b[1m{list[option].hours}\u001b[0m to \u001b[1m{newHours}\u001b[0m\n");
+                string yesNo = YesNo(optionName, "Is this correct?", $"\n   Alter hours on index \u001b[1m{option + 1}\u001b[0m from \u001b[1m{list[option].hours}\u001b[0m to \u001b[1m{newHours}\u001b[0m\n");
                 if (yesNo == "yes")
                 {
                     bool success = DatabaseAccess.EditRegisteredHours(list[option].id, newHours);  //THE RIGHT ID GETS PASSED IN HERE TO THE METHOD IN THE DatabaseAccess CLASS
@@ -695,13 +778,12 @@ namespace MiniprojectSQL
                 Console.Clear();
                 TitleScreen();
                 OptionTitleInRed(optionName);
-                string person = GetPerson(optionName, "Choose person");
-                if (person == "") { PleasePressEnter(); break; }
-                List<ProjectPersonModel> PersonOnAProjectList = DatabaseAccess.GetPersonWithManyProjects(person);
-                PersonOnAProjectList.Add(new ProjectPersonModel { person_name = "Back to menu" });
-                //PersonOnAProjectList.Insert(0, new ProjectPersonModel { person_name = "Back to menu" });
+                (int, string) person = GetPerson(optionName, "Choose person");
+                if (person.Item1 == 0) { PleasePressEnter(); break; }
+                List<ProjectPersonModel> PersonOnAProjectList = DatabaseAccess.GetPersonWithManyProjects(person.Item1);
+                PersonOnAProjectList.Add(new ProjectPersonModel { extra = "\u001b[0mBack to menu" });
 
-                EditRegTimeOnPerson(PersonOnAProjectList, optionName, person);
+                EditRegTimeOnPerson(PersonOnAProjectList, optionName, person.Item2);
 
                 PleasePressEnter();
                 break;
@@ -718,10 +800,10 @@ namespace MiniprojectSQL
             OptionTitleInRed(optionName);
             bool isRunning = true;
             while (isRunning)
-            {
-                string projectName = GetProject(optionName);  // USER GETS TO CHOOSE WHICH PROJECT TO AFFECT FROM A LIST IN THIS METHOD, 
-                if (projectName == "") { break; }      //THE NAME OF THE PROJECT GETS RETURNED, IF THE LAST OPTION ON THE LIST, THEN "" WILL BE RETURNED, WHICH MEANS TO GO BACK TO MENU
-                Console.WriteLine($"\n   Edit \u001b[1m{projectName}\u001b[0m");
+            {   //NOTE THAT I USED TUPLES TO GET RETURN VALUE OF BOTH AN ID AND A NAME
+                (int, string) projectName = GetProject(optionName);  // USER GETS TO CHOOSE WHICH PROJECT TO AFFECT FROM A LIST IN THIS METHOD, 
+                if (projectName.Item1 == 0) { break; }      //THE ID AND THE NAME OF THE PROJECT GETS RETURNED, IF THE LAST OPTION ON THE LIST THEN 0 WILL BE RETURNED, WHICH MEANS TO GO BACK TO MENU
+                Console.WriteLine($"\n   Edit \u001b[1m{projectName.Item2}\u001b[0m");
 
                 InstructionInYellow("Please input new project name\n   Leave blank to cancel");
                 Console.CursorVisible = true;
@@ -733,11 +815,11 @@ namespace MiniprojectSQL
                     Console.WriteLine($"\n   Canceling");
                     break;
                 }
-                string message = $"\n   Change \u001b[1m{projectName}\u001b[0m to \u001b[1m{newName}\u001b[0m\n";
-                string yesNo = IsCorrect(optionName, message);
+                string message = $"\n   Change \u001b[1m{projectName.Item2}\u001b[0m to \u001b[1m{newName}\u001b[0m\n";
+                string yesNo = YesNo(optionName, "Is this correct?", message);
                 if(yesNo == "yes")
                 {
-                    bool success = DatabaseAccess.EditProjectName(projectName ,newName);  //HERE IS WHERE THE NEW AND THE OLD NAME GETS PASSED INTO A METHOD THAT PERFORMES THE OPERATION IN THE SQL DATABASE
+                    bool success = DatabaseAccess.EditProjectName(projectName.Item1 ,newName);  //HERE IS WHERE THE NEW NAME AND THE ID GETS PASSED INTO A METHOD THAT PERFORMES THE OPERATION IN THE SQL DATABASE
                     if (success == true) 
                     { 
                         SuccessInGreen("Project name was successfully changed!");  //IF SUCCESS, MESSAGE IN GREEN, IF FAIL, MESSAGE IN RED
@@ -766,9 +848,9 @@ namespace MiniprojectSQL
             bool isRunning = true;
             while (isRunning)
             {
-                string personName = GetPerson(optionName);
-                if (personName == "") { break; }
-                Console.WriteLine($"\n   Edit \u001b[1m{personName}\u001b[0m");
+                (int, string) personName = GetPerson(optionName);
+                if (personName.Item1 == 0) { break; }
+                Console.WriteLine($"\n   Edit \u001b[1m{personName.Item2}\u001b[0m");
 
                 InstructionInYellow("Please input new person name\n   Leave blank to cancel");
                 Console.CursorVisible = true;
@@ -780,19 +862,19 @@ namespace MiniprojectSQL
                     Console.WriteLine($"\n   Canceling");
                     break;
                 }
-                string message = $"\n   Change \u001b[1m{personName}\u001b[0m to \u001b[1m{newName}\u001b[0m\n";
-                string yesNo = IsCorrect(optionName, message);
+                string message = $"\n   Change \u001b[1m{personName.Item2}\u001b[0m to \u001b[1m{newName}\u001b[0m\n";
+                string yesNo = YesNo(optionName, "Is this correct?", message);
                 if (yesNo == "yes")
                 {
-                    bool success = DatabaseAccess.EditPersontName(personName, newName);
+                    bool success = DatabaseAccess.EditPersontName(personName.Item1, newName);
                     if (success == true)
                     {
-                        SuccessInGreen("Project name was successfully changed!");
+                        SuccessInGreen("Person name was successfully changed!");
                         isRunning = false;
                     }
                     else
                     {
-                        ErrorInRed("Project name was not changed");
+                        ErrorInRed("Person name was not changed");
                     }
                 }
             }
@@ -825,12 +907,13 @@ namespace MiniprojectSQL
 
             while (true)
             {               //THE USER CHOOSES THE PROJECT NAME FROM A LIST, WHICH THE METHOD GetProject() PROVIDES
-                string project = GetProject(optionName, "Choose project to DELETE\n   Project with registered hours cannot be deleted\n\n   \u001b[31mWARNING: DELETION IS PERMANENT!");
-                if (project == "") break;
-                int yesNo = AreYouSure(optionName, $"   Do you wish to DELETE {project}?\n");
-                if (yesNo == 0)
+                //NOTICE THAT GetProject() METHOD RETURNS TWO VARIABLES, ID AND NAME
+                (int, string) project = GetProject(optionName, "Choose project to DELETE\n   Project with registered hours cannot be deleted\n\n   \u001b[31mWARNING: DELETION IS PERMANENT!");
+                if (project.Item1 == 0) break;
+                string yesNo = YesNo(optionName, "Are you sure?", $"   Do you wish to DELETE {project.Item2}?\n");
+                if (yesNo == "yes")
                 {
-                    bool success = DatabaseAccess.DeleteProjectName(project);  //IF THE PROJECT CAN BE DELETED, IT WILL BE DELETED BY NAME IN THE DATABASE AND THE METHOD CALLED ON THIS LINE WILL MAKE IT SO
+                    bool success = DatabaseAccess.DeleteProjectName(project.Item1);  //IF THE PROJECT CAN BE DELETED, IT WILL BE DELETED BY ID IN THE DATABASE AND THE METHOD CALLED ON THIS LINE WILL MAKE IT SO
                     if (success == true)
                     {
                         SuccessInGreen("Greate success!");
@@ -860,12 +943,12 @@ namespace MiniprojectSQL
 
             while (true)
             {
-                string person = GetPerson(optionName, "Choose person to DELETE\n   Person with registered hours cannot be deleted\n\n   \u001b[31mWARNING: DELETION IS PERMANENT!");
-                if (person == "") break;
-                int yesNo = AreYouSure(optionName, $"   Do you wish to DELETE {person}?\n");
-                if (yesNo == 0)
+                (int, string) person = GetPerson(optionName, "Choose person to DELETE\n   Person with registered hours cannot be deleted\n\n   \u001b[31mWARNING: DELETION IS PERMANENT!");
+                if (person.Item1 == 0) break;
+                string yesNo = YesNo(optionName, "Are you sure?", $"   Do you wish to DELETE {person.Item2}?\n");
+                if (yesNo == "yes")
                 {
-                    bool success = DatabaseAccess.DeletePersonName(person);         //IT'S EXACTLY THE SAME THING AS ABOVE
+                    bool success = DatabaseAccess.DeletePersonName(person.Item1);         //IT'S EXACTLY THE SAME THING AS ABOVE
                     if (success == true)
                     {
                         SuccessInGreen("Greate success!");
@@ -876,7 +959,6 @@ namespace MiniprojectSQL
                         ErrorInRed("Could not DELETE person");
                         break;
                     }
-                    
                 }
                 else
                 {
@@ -905,8 +987,8 @@ namespace MiniprojectSQL
             //int index = 1;
             TitleScreen();
             OptionTitleInRed(optionName);
-            int option = AreYouSure(optionName, "   This will close the application\n");
-            if (option == 0) Environment.Exit(0);
+            string option = YesNo(optionName, "Are you sure?", "   This will close the application\n");
+            if (option == "yes") Environment.Exit(0);
         }
 
         /*

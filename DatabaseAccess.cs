@@ -15,15 +15,15 @@ namespace MiniprojectSQL
     {
 
         /*
-         * This class contains all the methods that make calls to the PostgreSQL Database
+         * This class contains all the methods that make calls to the Database
          * 
-         * These methods do things like geting person from the dac_person table, the dac_project table or the dac_project_person table
+         * These methods do things like getting names and id's from the dac_person table, the dac_project table or the dac_project_person table
          * aswell as updating, inserting and deleting
          * 
          */
 
         //THIS METHOD GETS ONLY ONE PERSON ON ONE SPECIFIC PROJECT FROM THE DATABASE
-        public static List<ProjectPersonModel> GetPersonOnOneProject(string person, string project)
+        public static List<ProjectPersonModel> GetPersonOnOneProject(int person_id, int project_id)
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
             {
@@ -35,15 +35,15 @@ namespace MiniprojectSQL
                         ON  dac_project_person.person_id = dac_person.id 
                         LEFT JOIN dac_project
                         ON dac_project_person.project_id = dac_project.id
-                        WHERE dac_person.id = (SELECT id FROM dac_person WHERE person_name = '{person}')
-                        AND dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}') ORDER BY dac_project_person.id ASC;", new DynamicParameters());
+                        WHERE dac_person.id = {person_id}
+                        AND dac_project.id = {project_id} ORDER BY dac_project_person.id ASC;", new DynamicParameters());
                 return output.ToList();
             }
         }
 
 
         //THIS METHOD GETS ONE PERSON THAT HAS REGISTERED HOURS IN SEVERAL PROJECTS
-        public static List<ProjectPersonModel> GetPersonWithManyProjects(string person)
+        public static List<ProjectPersonModel> GetPersonWithManyProjects(int person_id)
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
             {
@@ -55,14 +55,14 @@ namespace MiniprojectSQL
                         ON  dac_project_person.person_id = dac_person.id 
                         LEFT JOIN dac_project
                         ON dac_project_person.project_id = dac_project.id
-                        WHERE dac_person.id = (SELECT id FROM dac_person WHERE person_name = '{person}') ORDER BY dac_project_person.id ASC;", new DynamicParameters());
+                        WHERE dac_person.id = {person_id} ORDER BY dac_project_person.id ASC;", new DynamicParameters());
                 return output.ToList();
             }
         }
 
 
         //THIS METHOD GETS ONE PROJECT WITH MANY PERSONS WHO HAVE REGISTERED HOURS ON IT
-        public static List<ProjectPersonModel> GetProjectWithMany(string project)
+        public static List<ProjectPersonModel> GetProjectWithMany(int project_id)
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
             {
@@ -74,13 +74,13 @@ namespace MiniprojectSQL
                             ON dac_project_person.project_id = dac_project.id
                             LEFT JOIN dac_person
                             ON  dac_project_person.person_id = dac_person.id 
-                            WHERE dac_project.id = (SELECT id FROM dac_project WHERE project_name = '{project}') ORDER BY dac_project_person.id ASC;", new DynamicParameters());
+                            WHERE dac_project.id = {project_id} ORDER BY dac_project_person.id ASC;", new DynamicParameters());
                 return output.ToList();
             }
         }
 
         //THIS METHOD GETS ALL THE PROJECTS AND THE PERSONS BUT DOESEN'T LIST IT LIKE THE DATABASE LISTS IT, INSTEAD OF SHOWING project_name.id AND person_name.id
-        //IT WILL SHOW THE ACTUAL NAMES, SINCE IT MAKES MORE SENSE FOR THE USER. HOWEVER THIS MIGHT CHANGE LATER ON.
+        //IT WILL SHOW THE ACTUAL project_name, person_name and hours, SINCE IT IS THE MOST RELEVANT INFORMATION FOR THE USER.
         public static List<ProjectPersonModel> GetProjectPersonList()
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
@@ -101,14 +101,14 @@ namespace MiniprojectSQL
         //SOME OF THE METHODS RETURN A BOOLEAN TO INDICATE IF THE OPERATION WAS SUCCESSFUL OR NOT
 
 
-        //THIS METHOD WILL BE CALLED BY ANOTHER METHOD TO PERFORM DELETION OF PROJECT BY NAME IN THE DATABASE
-        public static bool DeleteProjectName(string projectName)
+        //THIS METHOD WILL BE CALLED BY ANOTHER METHOD TO PERFORM DELETION OF PROJECT BY ID IN THE DATABASE
+        public static bool DeleteProjectName(int id)
         {
             try
             {
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
-                    cnn.Execute($"DELETE FROM dac_project WHERE project_name = '{projectName}';");
+                    cnn.Execute($"DELETE FROM dac_project WHERE id = {id};");
                 }
             }
             catch (Exception e)
@@ -120,14 +120,14 @@ namespace MiniprojectSQL
         }
 
 
-        //THIS METHOD WILL BE CALLED BY ANOTHER METHOD TO PERFORM DELETION OF PERSON BY NAME IN THE DATABASE
-        public static bool DeletePersonName(string personName)
+        //THIS METHOD WILL BE CALLED BY ANOTHER METHOD TO PERFORM DELETION OF PERSON BY ID IN THE DATABASE
+        public static bool DeletePersonName(int id)
         {
             try
             {
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
-                    cnn.Execute($"DELETE FROM dac_person WHERE person_name = '{personName}'; ");
+                    cnn.Execute($"DELETE FROM dac_person WHERE id = {id}; ");
                 }
             }
             catch (Exception e)
@@ -157,14 +157,14 @@ namespace MiniprojectSQL
         }
 
 
-        //THIS METHOD UPDATES ROW ON dac_project TABLE IN DATABASE BY NAME
-        public static bool EditProjectName(string oldName, string newName)
+        //THIS METHOD UPDATES ROW ON dac_project TABLE IN DATABASE BY ID
+        public static bool EditProjectName(int id, string newName)
         {
             try
             {
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
-                    cnn.Execute($"UPDATE dac_project SET project_name = '{newName}' WHERE project_name = '{oldName}'");
+                    cnn.Execute($"UPDATE dac_project SET project_name = '{newName}' WHERE id = {id}"); //NEW NAME WILL BE INSERTED WHERE ID IS LOCATED
                 }
             }
             catch (Exception e)
@@ -176,14 +176,14 @@ namespace MiniprojectSQL
         }
 
         
-        //THIS METHOD UPDATES ROW ON dac_person TABLE IN DATABASE BY NAME
-        public static bool EditPersontName(string oldName, string newName)
+        //THIS METHOD UPDATES ROW ON dac_person TABLE IN DATABASE BY ID
+        public static bool EditPersontName(int id, string newName)
         {
             try
             {
                 using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
                 {
-                    cnn.Execute($"UPDATE dac_person SET person_name = '{newName}' WHERE person_name = '{oldName}'");
+                    cnn.Execute($"UPDATE dac_person SET person_name = '{newName}' WHERE id =  {id}");
 
                 }
             }
@@ -195,8 +195,10 @@ namespace MiniprojectSQL
             return true;
         }
 
-        //THIS METHOD WILL ENTER HOURS IN dac_project_person TABLE AND ALSO WICH PERSON AND WHICH PROJECT IT CONCERNS
-        public static bool RegistrateHoursInDB(string project_name, string person_name, int hours)
+
+
+        //THIS METHOD WILL UPDATE hours ON A ROW ON dac_project_person TABLE BY THE CORRECT ID's
+        public static bool RegistrateHoursInDB(int project_id, int person_id, int hours)
         {
             try
             {
@@ -206,8 +208,8 @@ namespace MiniprojectSQL
                           BEGIN;
                               INSERT INTO dac_project_person (project_id, person_id, hours) 
                               VALUES 
-                              ((SELECT id FROM dac_project WHERE project_name = '{project_name}') , 
-                              (SELECT id FROM dac_person WHERE person_name = '{person_name}') , {hours});
+                              ({project_id} , 
+                              {person_id} , {hours});
                           COMMIT;");
                 }
             }
@@ -220,32 +222,8 @@ namespace MiniprojectSQL
         }
 
 
-        //THIS METHOD ONLY GETS NAMES FROM dac_project TABLE FOR LISTING
-        public static List<string> GetProjectName()
-        {
-            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
-            {
-                var output = cnn.Query<string>("SELECT project_name FROM dac_project ORDER BY id ASC", new DynamicParameters());
-                return output.ToList();
-            }
-        }
-
-
-        //THIS PROJECT GETS NAMES FROM dac_person FOR LISTING
-        public static List<string> GetPersonName()
-        {
-            using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
-            {
-                var output = cnn.Query<string>("SELECT person_name FROM dac_person ORDER BY id ASC", new DynamicParameters());
-                return output.ToList();
-            }
-        }
-
-        /*
-          
-         THE FOLLOWING CODE WILL COME IN LATER ON, FOR NOW THE CODE ABOVE DID MOST OF THE WORK OF GETTING PROJECT AND PERSON
-
-        public static List<ProjectModel> GetProject()
+        //THE METHOD BELOW GETS ALL PROJECT NAMES AND ID'S FROM dac_project TABLE AND USES ProjectModel AS A LIST TYPE TO LATER DISPLAY
+        public static List<ProjectModel> GetProjectTable()
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
             {
@@ -253,8 +231,8 @@ namespace MiniprojectSQL
                 return output.ToList();
             }
         }
-
-        public static List<PersonModel> GetPerson()
+        //LIKE THE ABOVE CODE, THIS METHOD DOES EXACLTY THE SAME BUT FOR PERSONS FROM dac_person TABLE
+        public static List<PersonModel> GetPersonTable()
         {
             using (IDbConnection cnn = new NpgsqlConnection(LoadConnectionString()))
             {
@@ -263,7 +241,7 @@ namespace MiniprojectSQL
             }
         }
 
-        */
+
 
 
         //THE BELOW CODE INSERTS A NEW NAME INTO THE TABLE dac_project IN DATABASE

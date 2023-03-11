@@ -8,8 +8,8 @@ namespace MiniprojectSQL
 {
     public class ProjectPersonModel
     {
-        //I had no choice but to use this object in order to make changes to the project_person table in the DB
-        //A method in DatabaseAccess.cs takes this in as Lis<ProjectPersonModel>
+        //THIS OBJECT RESEMBLES THE DATABASE TABLE dac_project_person
+        //Methods usualy uses this as type, in DatabaseAccess.cs method may use this as list type List<ProjectPersonModel>
         //I had to add project_name and person_name here aswell so that there where not only numbers in the listing when editing registered hours
 
 
@@ -19,5 +19,7 @@ namespace MiniprojectSQL
         public string project_name { get; set; }
         public string person_name { get; set; }
         public int hours { get; set; }
+
+        public string extra { get; set; } //Another extra (no pun intended) feature here is the extra-field, I will store strings like "Back to menu" here
     }
 }
