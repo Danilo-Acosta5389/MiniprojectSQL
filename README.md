@@ -40,7 +40,6 @@ Otherwise i have a TODO list for future changes:
   <li>Be able to enter minutes</li>
   <li>Add "Danger zone" option. This should contain deletion of all sorts. Including whiping all data of the DB, to start over completely.</li>
   <li>User should be able to delete a wrongful entry. At the moment user can only change amount of hours in an entry.</li>
-  <li>Some SQL methods dont take uniqe identifier, they should, although in this context, it don't seem harmfull having it like it is.</li>
 </ul>
 
 ## How to setup
