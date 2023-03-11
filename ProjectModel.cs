@@ -8,11 +8,12 @@ namespace MiniprojectSQL
 {
     public class ProjectModel
     {
-        //I barely use this but might come in handy if i change the structure of the methods that make calls to the DB
-        //The id is a uniqe identifier that i should use more often in the program
-        //However i almost exclusevly use the "project_name" variable/field.
+        //This model resembles the dac_project table in the SQL database
+        //This is used when listing project names in navigation menu
+        //It is also used by methods that make calls to the Db, to get all users, it is often used as a list type List<ProjectModel>
 
         public int id { get; set; }
         public string project_name { get; set; }
+        public string extra { get; set; } //Go back option goes in here when listing in menu
     }
 }
